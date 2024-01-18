@@ -4,6 +4,8 @@ A mapping view to pypi projects
 
 To install:	```pip install yp```
 
+See also: `pipoke`, for more pypi interaction tools.
+
 # Example Usage
 
 Get a mapping of all of ``pypi`` projects.
