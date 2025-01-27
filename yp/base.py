@@ -113,9 +113,14 @@ class Pypi(KvReader):
         self.info_extractor = info_extractor or asis
 
     @classmethod
-    def refresh_cached_package_names(self):
+    def with_fresh_cached_package_names(cls):
         """Download and save a fresh copy of pypi's package names"""
-        return refresh_saved_pkg_name_stub()
+        refresh_saved_pkg_name_stub()
+        return cls()
+
+    refresh_cached_package_names = (
+        with_fresh_cached_package_names  # backwards compatibility alias
+    )
 
     def __iter__(self):
         yield from self.proj_names
@@ -199,6 +204,8 @@ def refresh_saved_pkg_name_stub(verbose=True):
     Update the ``{pkg_name: pkg_stub}`` stored data with a fresh call to
     ``get_updated_pkg_name_stub``
     """
+    global pkg_name_stub
+
     n = 0
     if verbose:
         n = (
@@ -266,7 +273,7 @@ def return_sentinel_on_exception(caught_exceptions=(Exception,), sentinel=None):
 )
 def gen_find(tag, *args, **kwargs):
     """Does what BeautifulSoup.find_all does, but as an iterator.
-        See find_all documentation for more information."""
+    See find_all documentation for more information."""
     if isinstance(tag, str):
         tag = BeautifulSoup(tag, features='lxml')
     next_tag = tag.find(*args, **kwargs)
