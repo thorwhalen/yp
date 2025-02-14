@@ -159,6 +159,21 @@ class Pypi(KvReader):
             suffix = f'(...)'
         return prefix + suffix
 
+    def is_available(self, word):
+        return word not in self
+
+    @staticmethod
+    def live_is_available(pkg_name):
+        """Check if a package name is available,
+        but live (directly on pypi, not a cache)"""
+        import urllib
+
+        try:
+            with urllib.request.urlopen(f'https://pypi.org/project/{pkg_name}') as u:
+                return False
+        except urllib.error.HTTPError as e:
+            return True  # if url is invalid, package exists
+
 
 def slurp_user_projects_info(user):
     """Fetches the list of projects for that user.
