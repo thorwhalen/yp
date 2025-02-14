@@ -5,6 +5,6 @@ from yp.base import (
     pkg_name_stub,
     refresh_saved_pkg_name_stub,
     info_of_pkg_from_web,
-    slurp_user_projects_info
+    slurp_user_projects_info  # Fetches the info of projects for a user
 )
 

@@ -178,7 +178,8 @@ class Pypi(KvReader):
 
 
 def slurp_user_projects_info(user):
-    """Fetches the list of projects for that user.
+    """
+    Fetches the list of projects for that user.
     To do so it fetches the html of the user projects page and parses out
     ``name``, ``href`` and ``date`` (of the last release), which can be useful in
     its own, to not have to get it from repeated project info requests.
@@ -187,8 +188,9 @@ def slurp_user_projects_info(user):
     def extract_info(node):
         return dict(
             name=node.find('h3').text,
-            href=node.get('href'),
+            description=node.find('p', {'class': 'package-snippet__description'}).text,
             date=node.find('time').get('datetime'),
+            href=node.get('href'),
         )
 
     url = pypi_user_furl.format(user=user)
