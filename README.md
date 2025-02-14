@@ -62,4 +62,4 @@ you want to work with in all kinds of ways!
 The `yp.refresh_saved_pkg_name_stub()` will go fetch the current list of pypi names and save them locally (in the package's data folder). 
 
 I do this from time to time and push the results. You can find a list (as a text file with one name per line) here:
-https://raw.githubusercontent.com/vincepower/python-pypi-package-list/refs/heads/main/pypi-packages.json
+https://raw.githubusercontent.com/thorwhalen/yp/refs/heads/master/yp/data/pkg_list.txt
