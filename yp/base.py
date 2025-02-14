@@ -4,6 +4,7 @@ import os
 from functools import wraps
 import tempfile
 import pickle
+from pathlib import Path
 import re
 
 import requests
@@ -17,6 +18,7 @@ pkg_list_url = 'https://pypi.org/simple'
 pkg_info_furl = 'https://pypi.python.org/pypi/{pkg_name}/json'
 pypi_user_furl = 'https://pypi.org/user/{user}/'
 pkg_names_filepath = dpath('pkg_list.p')
+pkg_names_text_filepath = dpath('pkg_list.txt')
 pkg_name_re = re.compile(r'/simple/([^/]+)/')
 nums_re = re.compile(r'\d+')
 
@@ -229,6 +231,7 @@ def refresh_saved_pkg_name_stub(verbose=True):
         ) or 0
     pkg_name_stub = get_updated_pkg_name_stub()
     pickle.dump(pkg_name_stub, open(pkg_names_filepath, 'wb'))
+    Path(pkg_names_text_filepath).write_text('\n'.join(pkg_name_stub.keys()))
     if verbose:
         print(
             f'Updated the pkg_name_stub. Had {n} items; now has {len(pkg_name_stub)}.'
