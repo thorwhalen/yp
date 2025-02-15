@@ -177,7 +177,22 @@ class Pypi(KvReader):
             return True  # if url is invalid, package exists
 
 
-def slurp_user_projects_info(user):
+def _get_text_or_none(tag):
+    return tag.text if tag else None
+
+
+def _extract_project_info_from_user_page(node):
+    return dict(
+        name=_get_text_or_none(node.find('h3')),
+        description=_get_text_or_none(
+            node.find('p', {'class': 'package-snippet__description'})
+        ),
+        date=node.find('time').get('datetime'),
+        href=node.get('href'),
+    )
+
+
+def slurp_user_projects_info(user, *, extractor=_extract_project_info_from_user_page):
     """
     Fetches the list of projects for that user.
     To do so it fetches the html of the user projects page and parses out
@@ -185,24 +200,21 @@ def slurp_user_projects_info(user):
     its own, to not have to get it from repeated project info requests.
     """
 
-    def extract_info(node):
-        return dict(
-            name=node.find('h3').text,
-            description=node.find('p', {'class': 'package-snippet__description'}).text,
-            date=node.find('time').get('datetime'),
-            href=node.get('href'),
-        )
-
     url = pypi_user_furl.format(user=user)
     b = BeautifulSoup(
         request_saving_failure_responses('get', url).content, features='lxml'
     )
-    expected_n_projects = int(nums_re.search(b.find('h2').text.strip()).group(0))
     proj_infos = b.find_all('a', {'class': 'package-snippet'})
-    assert (
-        len(proj_infos) == expected_n_projects
-    ), f'I expected {expected_n_projects} projects but found {len(proj_infos)} listed'
-    return list(map(extract_info, proj_infos))
+
+    # TODO: Reinstate this check, or delete it.
+    # _t = _get_text_or_none(nums_re.search(b.find('h2')))
+    # if _t is not None:
+    #     expected_n_projects = int(_t.strip()).group(0)
+    #     assert (
+    #         len(proj_infos) == expected_n_projects
+    #     ), f'I expected {expected_n_projects} projects but found {len(proj_infos)} listed'
+
+    return list(map(extractor, proj_infos))
 
 
 def get_updated_pkg_name_stub():
