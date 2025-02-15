@@ -1,0 +1,8 @@
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
+   module_docs/yp
+   module_docs/yp/base
+   module_docs/yp/tools
+   module_docs/yp/util
