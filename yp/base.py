@@ -192,7 +192,28 @@ def _extract_project_info_from_user_page(node):
     )
 
 
-def slurp_user_projects_info(user, *, extractor=_extract_project_info_from_user_page):
+def get_url_contents_with_selenium(url: str, wait_seconds: int = 5) -> str:
+    import time
+    from selenium import webdriver  # pip install selenium
+    from selenium.webdriver.chrome.service import Service
+    from webdriver_manager.chrome import (
+        ChromeDriverManager,
+    )  # pip install webdriver-manager
+
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+    driver.get(url)
+    time.sleep(wait_seconds)  # Wait for the page to load
+    page_source = driver.page_source  # Full rendered HTML
+    driver.quit()  # Close the browser
+    return page_source
+
+
+def slurp_user_projects_info(
+    user,
+    *,
+    extractor=_extract_project_info_from_user_page,
+    validate_project_infos=False,
+):
     """
     Fetches the list of projects for that user.
     To do so it fetches the html of the user projects page and parses out
@@ -201,20 +222,23 @@ def slurp_user_projects_info(user, *, extractor=_extract_project_info_from_user_
     """
 
     url = pypi_user_furl.format(user=user)
-    b = BeautifulSoup(
-        request_saving_failure_responses('get', url).content, features='lxml'
-    )
+    page_contents = get_url_contents_with_selenium(
+        url, wait_seconds=5
+    )  # see note below
+    b = BeautifulSoup(page_contents, features='lxml')
     proj_infos = b.find_all('a', {'class': 'package-snippet'})
-
-    # TODO: Reinstate this check, or delete it.
-    # _t = _get_text_or_none(nums_re.search(b.find('h2')))
-    # if _t is not None:
-    #     expected_n_projects = int(_t.strip()).group(0)
-    #     assert (
-    #         len(proj_infos) == expected_n_projects
-    #     ), f'I expected {expected_n_projects} projects but found {len(proj_infos)} listed'
-
+    if validate_project_infos:
+        _validate_user_projects_infos(proj_infos)
     return list(map(extractor, proj_infos))
+
+
+def _validate_user_projects_infos(proj_infos):
+    _t = _get_text_or_none(nums_re.search(b.find('h2')))
+    if _t is not None:
+        expected_n_projects = int(_t.strip()).group(0)
+        assert (
+            len(proj_infos) == expected_n_projects
+        ), f'I expected {expected_n_projects} projects but found {len(proj_infos)} listed'
 
 
 def get_updated_pkg_name_stub():
