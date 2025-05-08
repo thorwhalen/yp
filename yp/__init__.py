@@ -7,3 +7,4 @@ from yp.base import (
     info_of_pkg_from_web,
     slurp_user_projects_info,  # Fetches the info of projects for a user
 )
+from yp.deps import package_dependencies, package_dependencies_tree
