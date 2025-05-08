@@ -71,7 +71,7 @@ class Pypi(KvReader):
     If, on the other hand, you don't want all projects of Pypi to be the collection
     you're working with, you can specify what ``user`` they should belong to:
 
-    >>> p = Pypi(user='thorwhalen1')
+    >>> p = Pypi(user='thorwhalen1')  # doctest: +SKIP
     >>> len(p)  # doctest: +SKIP
     131
 
