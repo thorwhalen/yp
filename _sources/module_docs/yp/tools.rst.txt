@@ -1,4 +1,0 @@
-yp.tools
-========
-.. automodule:: yp.tools
-   :members:
