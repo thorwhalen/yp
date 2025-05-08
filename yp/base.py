@@ -225,20 +225,20 @@ def slurp_user_projects_info(
     page_contents = get_url_contents_with_selenium(
         url, wait_seconds=5
     )  # see note below
-    b = BeautifulSoup(page_contents, features='lxml')
-    proj_infos = b.find_all('a', {'class': 'package-snippet'})
+    b = BeautifulSoup(page_contents, features="lxml")
+    proj_infos = b.find_all("a", {"class": "package-snippet"})
     if validate_project_infos:
         _validate_user_projects_infos(proj_infos)
     return list(map(extractor, proj_infos))
 
 
 def _validate_user_projects_infos(proj_infos):
-    _t = _get_text_or_none(nums_re.search(b.find('h2')))
+    _t = _get_text_or_none(nums_re.search(b.find("h2")))
     if _t is not None:
         expected_n_projects = int(_t.strip()).group(0)
         assert (
             len(proj_infos) == expected_n_projects
-        ), f'I expected {expected_n_projects} projects but found {len(proj_infos)} listed'
+        ), f"I expected {expected_n_projects} projects but found {len(proj_infos)} listed"
 
 
 def get_updated_pkg_name_stub():
