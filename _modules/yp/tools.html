@@ -1,0 +1,227 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>yp.tools &mdash; yp 0.0.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=f7cdbf68"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            yp
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/yp.html">yp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/yp/base.html">yp.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/yp/deps.html">yp.deps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/yp/tools.html">yp.tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/yp/util.html">yp.util</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">yp</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">yp.tools</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for yp.tools</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;A medley of yp-derived tools for working with pypi&quot;&quot;&quot;</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">download_packages_info</span><span class="p">(</span><span class="n">package_names</span><span class="p">,</span> <span class="n">save_store</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">dol</span><span class="w"> </span><span class="kn">import</span> <span class="n">Jsons</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">yp</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pypi</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">package_names</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">package_names</span><span class="p">):</span>
+            <span class="n">filepath</span> <span class="o">=</span> <span class="n">package_names</span>
+            <span class="n">package_names</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">package_names</span> <span class="o">=</span> <span class="n">package_names</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="n">package_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">package_names</span><span class="p">]</span>  <span class="c1"># strip the names</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">save_store</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">save_store</span> <span class="o">=</span> <span class="n">Jsons</span><span class="p">(</span><span class="n">save_store</span><span class="p">)</span>
+
+    <span class="n">clog</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="n">verbose</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="n">pypi</span> <span class="o">=</span> <span class="n">Pypi</span><span class="p">()</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">package_names</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">package_names</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">clog</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;----- </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> -----&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">save_store</span><span class="p">:</span>  <span class="c1"># so won&#39;t be fresh data</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">save_store</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">pypi</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">clog</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error with item (</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">): </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">save_store</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_main_info</span><span class="p">(</span><span class="n">pkg_info_dict</span><span class="p">):</span>
+    <span class="c1"># resources ----------------------------------</span>
+    <span class="c1"># Keeping inside function for easy movement</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">dol.paths</span><span class="w"> </span><span class="kn">import</span> <span class="n">paths_getter</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+
+    <span class="n">_paths_getter</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">paths_getter</span><span class="p">,</span> <span class="n">on_error</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span><span class="p">())</span>
+    <span class="n">next_iter</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="p">{})</span>
+
+    <span class="n">extract_info</span> <span class="o">=</span> <span class="n">_paths_getter</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;info.version&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;summary&quot;</span><span class="p">:</span> <span class="s2">&quot;info.summary&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;home_page&quot;</span><span class="p">:</span> <span class="s2">&quot;info.home_page&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;project_url&quot;</span><span class="p">:</span> <span class="s2">&quot;info.project_url&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;license&quot;</span><span class="p">:</span> <span class="s2">&quot;info.license&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;info.description&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;requires_dist&quot;</span><span class="p">:</span> <span class="s2">&quot;info.requires_dist&quot;</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">)</span>
+
+    <span class="c1"># code ----------------------------------</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="n">extract_info</span><span class="p">(</span><span class="n">pkg_info_dict</span><span class="p">)</span>
+
+    <span class="n">last_release_info</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">version</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">version</span><span class="p">:</span>
+        <span class="n">releases</span> <span class="o">=</span> <span class="n">pkg_info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;releases&quot;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">last_releases</span> <span class="o">=</span> <span class="n">releases</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">version</span><span class="p">,</span> <span class="p">{})</span>
+
+        <span class="c1"># Don&#39;t just get the first one found, but rather the first sdist, or the first wheel if no sdist</span>
+        <span class="n">last_release</span> <span class="o">=</span> <span class="n">next_iter</span><span class="p">(</span>
+            <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;packagetype&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;sdist&quot;</span><span class="p">,</span> <span class="n">last_releases</span><span class="p">)</span>
+        <span class="p">)</span> <span class="ow">or</span> <span class="n">next_iter</span><span class="p">(</span>
+            <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;packagetype&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;bdist_wheel&quot;</span><span class="p">,</span> <span class="n">last_releases</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">last_release_info</span> <span class="o">=</span> <span class="n">_paths_getter</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;size&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;upload_time_iso_8601&quot;</span><span class="p">:</span> <span class="s2">&quot;upload_time_iso_8601&quot;</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="n">last_release</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="o">**</span><span class="n">last_release_info</span><span class="p">)</span>
+
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">packaging.version</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse</span> <span class="k">as</span> <span class="n">parse_version</span>
+
+<div class="viewcode-block" id="latest_release_upload_datetime">
+<a class="viewcode-back" href="../../module_docs/yp/tools.html#yp.tools.latest_release_upload_datetime">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">latest_release_upload_datetime</span><span class="p">(</span><span class="n">releases_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gets the upload_time of the first item of the latest release from the &#39;releases&#39; data.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        releases_data: A dictionary representing the &#39;releases&#39; value from a PyPI info JSON.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A string representing the &#39;upload_time&#39; of the first file of the latest release,</span>
+<span class="sd">        or None if the input is empty or malformed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">releases_data</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="c1"># Sort versions to find the latest</span>
+    <span class="n">versions</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">releases_data</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="n">parse_version</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">versions</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">latest_version</span> <span class="o">=</span> <span class="n">versions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">release_files</span> <span class="o">=</span> <span class="n">releases_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">latest_version</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">release_files</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">release_files</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="n">release_files</span><span class="p">:</span>
+        <span class="n">first_file_info</span> <span class="o">=</span> <span class="n">release_files</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">first_file_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;upload_time&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

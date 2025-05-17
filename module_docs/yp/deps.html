@@ -1,0 +1,281 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>yp.deps &mdash; yp 0.0.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=f7cdbf68"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="yp.tools" href="tools.html" />
+    <link rel="prev" title="yp.base" href="base.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            yp
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../yp.html">yp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="base.html">yp.base</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">yp.deps</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#yp.deps.build_nested_deps"><code class="docutils literal notranslate"><span class="pre">build_nested_deps()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#yp.deps.package_dependencies"><code class="docutils literal notranslate"><span class="pre">package_dependencies()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#yp.deps.package_dependencies_tree"><code class="docutils literal notranslate"><span class="pre">package_dependencies_tree()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#yp.deps.parse_pipdeptree"><code class="docutils literal notranslate"><span class="pre">parse_pipdeptree()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">yp.tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="util.html">yp.util</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">yp</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">yp.deps</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/module_docs/yp/deps.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-yp.deps">
+<span id="yp-deps"></span><h1>yp.deps<a class="headerlink" href="#module-yp.deps" title="Link to this heading"></a></h1>
+<p>Tools for getting dependencies info.</p>
+<p class="rubric">Examples</p>
+<p>Simple usage:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">sorted</span><span class="p">(</span><span class="n">package_dependencies</span><span class="p">(</span><span class="s2">&quot;bs4&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;names&quot;</span><span class="p">))</span>
+<span class="go">[&#39;beautifulsoup4&#39;, &#39;soupsieve&#39;, &#39;typing_extensions&#39;]</span>
+</pre></div>
+</div>
+<p>More involved:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">package_dependencies_tree</span><span class="p">(</span><span class="s1">&#39;bs4&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">d</span> <span class="o">==</span> <span class="p">[</span>  
+<span class="gp">... </span>    <span class="p">{</span>
+<span class="gp">... </span>        <span class="s1">&#39;package&#39;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>            <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="s1">&#39;beautifulsoup4&#39;</span><span class="p">,</span>
+<span class="gp">... </span>            <span class="s1">&#39;package_name&#39;</span><span class="p">:</span> <span class="s1">&#39;beautifulsoup4&#39;</span><span class="p">,</span>
+<span class="gp">... </span>            <span class="s1">&#39;installed_version&#39;</span><span class="p">:</span> <span class="s1">&#39;4.13.3&#39;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="p">},</span>
+<span class="gp">... </span>        <span class="s1">&#39;dependencies&#39;</span><span class="p">:</span> <span class="p">[</span>
+<span class="gp">... </span>            <span class="p">{</span>
+<span class="gp">... </span>                <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="s1">&#39;soupsieve&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                <span class="s1">&#39;package_name&#39;</span><span class="p">:</span> <span class="s1">&#39;soupsieve&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                <span class="s1">&#39;installed_version&#39;</span><span class="p">:</span> <span class="s1">&#39;2.6&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                <span class="s1">&#39;required_version&#39;</span><span class="p">:</span> <span class="s1">&#39;&gt;1.2&#39;</span><span class="p">,</span>
+<span class="gp">... </span>            <span class="p">},</span>
+<span class="gp">... </span>            <span class="p">{</span>
+<span class="gp">... </span>                <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="s1">&#39;typing-extensions&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                <span class="s1">&#39;package_name&#39;</span><span class="p">:</span> <span class="s1">&#39;typing_extensions&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                <span class="s1">&#39;installed_version&#39;</span><span class="p">:</span> <span class="s1">&#39;4.12.2&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                <span class="s1">&#39;required_version&#39;</span><span class="p">:</span> <span class="s1">&#39;&gt;=4.0.0&#39;</span><span class="p">,</span>
+<span class="gp">... </span>            <span class="p">},</span>
+<span class="gp">... </span>        <span class="p">],</span>
+<span class="gp">... </span>    <span class="p">},</span>
+<span class="gp">... </span>    <span class="p">{</span>
+<span class="gp">... </span>        <span class="s1">&#39;package&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="s1">&#39;bs4&#39;</span><span class="p">,</span> <span class="s1">&#39;package_name&#39;</span><span class="p">:</span> <span class="s1">&#39;bs4&#39;</span><span class="p">,</span> <span class="s1">&#39;installed_version&#39;</span><span class="p">:</span> <span class="s1">&#39;0.0.2&#39;</span><span class="p">},</span>
+<span class="gp">... </span>        <span class="s1">&#39;dependencies&#39;</span><span class="p">:</span> <span class="p">[</span>
+<span class="gp">... </span>            <span class="p">{</span>
+<span class="gp">... </span>                <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="s1">&#39;beautifulsoup4&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                <span class="s1">&#39;package_name&#39;</span><span class="p">:</span> <span class="s1">&#39;beautifulsoup4&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                <span class="s1">&#39;installed_version&#39;</span><span class="p">:</span> <span class="s1">&#39;4.13.3&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                <span class="s1">&#39;required_version&#39;</span><span class="p">:</span> <span class="s1">&#39;Any&#39;</span><span class="p">,</span>
+<span class="gp">... </span>            <span class="p">}</span>
+<span class="gp">... </span>        <span class="p">],</span>
+<span class="gp">... </span>    <span class="p">},</span>
+<span class="gp">... </span>    <span class="p">{</span>
+<span class="gp">... </span>        <span class="s1">&#39;package&#39;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>            <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="s1">&#39;soupsieve&#39;</span><span class="p">,</span>
+<span class="gp">... </span>            <span class="s1">&#39;package_name&#39;</span><span class="p">:</span> <span class="s1">&#39;soupsieve&#39;</span><span class="p">,</span>
+<span class="gp">... </span>            <span class="s1">&#39;installed_version&#39;</span><span class="p">:</span> <span class="s1">&#39;2.6&#39;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="p">},</span>
+<span class="gp">... </span>        <span class="s1">&#39;dependencies&#39;</span><span class="p">:</span> <span class="p">[],</span>
+<span class="gp">... </span>    <span class="p">},</span>
+<span class="gp">... </span>    <span class="p">{</span>
+<span class="gp">... </span>        <span class="s1">&#39;package&#39;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>            <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="s1">&#39;typing-extensions&#39;</span><span class="p">,</span>
+<span class="gp">... </span>            <span class="s1">&#39;package_name&#39;</span><span class="p">:</span> <span class="s1">&#39;typing_extensions&#39;</span><span class="p">,</span>
+<span class="gp">... </span>            <span class="s1">&#39;installed_version&#39;</span><span class="p">:</span> <span class="s1">&#39;4.12.2&#39;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="p">},</span>
+<span class="gp">... </span>        <span class="s1">&#39;dependencies&#39;</span><span class="p">:</span> <span class="p">[],</span>
+<span class="gp">... </span>    <span class="p">},</span>
+<span class="gp">... </span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">info_by_key</span><span class="p">,</span> <span class="n">flat_deps</span> <span class="o">=</span> <span class="n">parse_pipdeptree</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">info_by_key</span> <span class="o">==</span> <span class="p">{</span>  
+<span class="gp">... </span>    <span class="s1">&#39;beautifulsoup4&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;package_name&#39;</span><span class="p">:</span> <span class="s1">&#39;beautifulsoup4&#39;</span><span class="p">,</span> <span class="s1">&#39;installed_version&#39;</span><span class="p">:</span> <span class="s1">&#39;4.13.3&#39;</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="s1">&#39;bs4&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;package_name&#39;</span><span class="p">:</span> <span class="s1">&#39;bs4&#39;</span><span class="p">,</span> <span class="s1">&#39;installed_version&#39;</span><span class="p">:</span> <span class="s1">&#39;0.0.2&#39;</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="s1">&#39;soupsieve&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;package_name&#39;</span><span class="p">:</span> <span class="s1">&#39;soupsieve&#39;</span><span class="p">,</span> <span class="s1">&#39;installed_version&#39;</span><span class="p">:</span> <span class="s1">&#39;2.6&#39;</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="s1">&#39;typing-extensions&#39;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>        <span class="s1">&#39;package_name&#39;</span><span class="p">:</span> <span class="s1">&#39;typing_extensions&#39;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s1">&#39;installed_version&#39;</span><span class="p">:</span> <span class="s1">&#39;4.12.2&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="p">},</span>
+<span class="gp">... </span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">flat_deps</span> <span class="o">==</span> <span class="p">{</span>  
+<span class="gp">... </span>    <span class="s1">&#39;beautifulsoup4&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;soupsieve&#39;</span><span class="p">:</span> <span class="s1">&#39;&gt;1.2&#39;</span><span class="p">,</span> <span class="s1">&#39;typing-extensions&#39;</span><span class="p">:</span> <span class="s1">&#39;&gt;=4.0.0&#39;</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="s1">&#39;bs4&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;beautifulsoup4&#39;</span><span class="p">:</span> <span class="s1">&#39;Any&#39;</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="s1">&#39;soupsieve&#39;</span><span class="p">:</span> <span class="p">{},</span>
+<span class="gp">... </span>    <span class="s1">&#39;typing-extensions&#39;</span><span class="p">:</span> <span class="p">{},</span>
+<span class="gp">... </span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nested_tree</span> <span class="o">=</span> <span class="n">build_nested_deps</span><span class="p">(</span><span class="s2">&quot;bs4&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">nested_tree</span> <span class="o">==</span> <span class="p">{</span>  
+<span class="gp">... </span>    <span class="s1">&#39;beautifulsoup4&#39;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>        <span class="s1">&#39;required_version&#39;</span><span class="p">:</span> <span class="s1">&#39;Any&#39;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s1">&#39;dependencies&#39;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>            <span class="s1">&#39;soupsieve&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;required_version&#39;</span><span class="p">:</span> <span class="s1">&#39;&gt;1.2&#39;</span><span class="p">,</span> <span class="s1">&#39;dependencies&#39;</span><span class="p">:</span> <span class="p">{}},</span>
+<span class="gp">... </span>            <span class="s1">&#39;typing-extensions&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;required_version&#39;</span><span class="p">:</span> <span class="s1">&#39;&gt;=4.0.0&#39;</span><span class="p">,</span> <span class="s1">&#39;dependencies&#39;</span><span class="p">:</span> <span class="p">{}},</span>
+<span class="gp">... </span>        <span class="p">},</span>
+<span class="gp">... </span>    <span class="p">}</span>
+<span class="gp">... </span><span class="p">}</span>
+</pre></div>
+</div>
+<dl class="py function">
+<dt class="sig sig-object py" id="yp.deps.build_nested_deps">
+<span class="sig-prename descclassname"><span class="pre">yp.deps.</span></span><span class="sig-name descname"><span class="pre">build_nested_deps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">package_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat_deps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/yp/deps.html#build_nested_deps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#yp.deps.build_nested_deps" title="Link to this definition"></a></dt>
+<dd><p>Recursively build a nested dict of dependencies for <cite>package_key</cite>.
+Each node is { dep_key: {“required_version”:…, “dependencies”: {…}}, … }</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="yp.deps.package_dependencies">
+<span class="sig-prename descclassname"><span class="pre">yp.deps.</span></span><span class="sig-name descname"><span class="pre">package_dependencies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">package_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'names'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat_deps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info_by_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_transitive</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_details</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">only_include_problematic_versions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/yp/deps.html#package_dependencies"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#yp.deps.package_dependencies" title="Link to this definition"></a></dt>
+<dd><p>Return the dependencies of <cite>package_key</cite> in one of three formats:</p>
+<p>format=”names”            -&gt; [“dep1”, “dep2”, …]
+format=”names_with_req”   -&gt; [“dep1&gt;=1.2.0”, “dep2&lt;0.5”, …]
+format=”tuples”           -&gt; [(“dep1”, “&gt;=”, “1.2.0”), (“dep2”, “&lt;”, “0.5”), …]</p>
+<dl class="simple">
+<dt>When include_details=True, returns a list of dicts instead:</dt><dd><p>[{“package_name”:…, “required_version”:…, “installed_version”:…}, …]</p>
+</dd>
+</dl>
+<ul class="simple">
+<li><p>package_key: the package key whose deps you want</p></li>
+<li><p>flat_deps: output of parse_pipdeptree (dict pkg_key → {dep_key: req_str,…})</p></li>
+<li><p>info_by_key: output of parse_pipdeptree (dict pkg_key → installed/info)</p></li>
+<li><p>include_transitive: whether to include transitive (indirect) dependencies</p></li>
+<li><p>include_details: whether to return detailed information about each dependency</p></li>
+<li><p>only_include_problematic_versions: when True, only include dependencies where installed version
+doesn’t satisfy the required version (only used when include_details=True)</p></li>
+</ul>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">sorted</span><span class="p">(</span><span class="n">package_dependencies</span><span class="p">(</span><span class="s2">&quot;bs4&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;names&quot;</span><span class="p">))</span>
+<span class="go">[&#39;beautifulsoup4&#39;, &#39;soupsieve&#39;, &#39;typing_extensions&#39;]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="yp.deps.package_dependencies_tree">
+<span class="sig-prename descclassname"><span class="pre">yp.deps.</span></span><span class="sig-name descname"><span class="pre">package_dependencies_tree</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">package_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_none_if_package_not_installed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../../_modules/yp/deps.html#package_dependencies_tree"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#yp.deps.package_dependencies_tree" title="Link to this definition"></a></dt>
+<dd><p>Fetches raw dependency data from pipdeptree for a specific package.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>package_name</strong> – The name of the installed package to inspect.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of package data from pipdeptree.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>subprocess.CalledProcessError</strong> – If pipdeptree command fails</p></li>
+<li><p><strong>json.JSONDecodeError</strong> – If parsing JSON output fails</p></li>
+<li><p><strong>FileNotFoundError</strong> – If pipdeptree is not installed</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="yp.deps.parse_pipdeptree">
+<span class="sig-prename descclassname"><span class="pre">yp.deps.</span></span><span class="sig-name descname"><span class="pre">parse_pipdeptree</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/yp/deps.html#parse_pipdeptree"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#yp.deps.parse_pipdeptree" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Turn pipdeptree JSON (list of PackageInfo dicts) into</dt><dd><ol class="arabic simple">
+<li><p>info_by_key:  { pkg_key: {“package_name”:…, “installed_version”:…}, … }</p></li>
+<li><p>flat_deps:    { pkg_key: {dep_key: required_version, …}, … }</p></li>
+</ol>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="base.html" class="btn btn-neutral float-left" title="yp.base" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tools.html" class="btn btn-neutral float-right" title="yp.tools" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
