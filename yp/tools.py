@@ -80,3 +80,35 @@ def extract_main_info(pkg_info_dict):
         )
 
     return dict(info, **last_release_info)
+
+
+from packaging.version import parse as parse_version
+
+def latest_release_upload_datetime(releases_data: dict) -> str | None:
+    """
+    Gets the upload_time of the first item of the latest release from the 'releases' data.
+
+    Args:
+        releases_data: A dictionary representing the 'releases' value from a PyPI info JSON.
+
+    Returns:
+        A string representing the 'upload_time' of the first file of the latest release,
+        or None if the input is empty or malformed.
+    """
+    if not releases_data:
+        return None
+
+    # Sort versions to find the latest
+    versions = sorted(releases_data.keys(), key=parse_version, reverse=True)
+
+    if not versions:
+        return None
+
+    latest_version = versions[0]
+    release_files = releases_data.get(latest_version)
+
+    if release_files and isinstance(release_files, list) and release_files:
+        first_file_info = release_files[0]
+        return first_file_info.get('upload_time')
+
+    return None
