@@ -84,6 +84,7 @@ def extract_main_info(pkg_info_dict):
 
 from packaging.version import parse as parse_version
 
+
 def latest_release_upload_datetime(releases_data: dict) -> str | None:
     """
     Gets the upload_time of the first item of the latest release from the 'releases' data.
@@ -109,6 +110,6 @@ def latest_release_upload_datetime(releases_data: dict) -> str | None:
 
     if release_files and isinstance(release_files, list) and release_files:
         first_file_info = release_files[0]
-        return first_file_info.get('upload_time')
+        return first_file_info.get("upload_time")
 
     return None
