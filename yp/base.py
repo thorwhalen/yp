@@ -7,12 +7,14 @@ import pickle
 from pathlib import Path
 import re
 
+from streamlit import json
+
 import requests
 from requests.exceptions import RequestException
 from bs4 import BeautifulSoup
 from dol import KvReader, wrap_kvs
 
-from yp.util import dpath
+from yp.util import dpath, app_path
 
 pkg_list_url = "https://pypi.org/simple"
 pkg_info_furl = "https://pypi.python.org/pypi/{pkg_name}/json"
@@ -21,6 +23,10 @@ pkg_names_filepath = dpath("pkg_list.p")
 pkg_names_text_filepath = dpath("pkg_list.txt")
 pkg_name_re = re.compile(r"/simple/([^/]+)/")
 nums_re = re.compile(r"\d+")
+
+user_projects_info_path = app_path / "user_projects_info"
+# ensure directory exists
+user_projects_info_path.mkdir(parents=True, exist_ok=True)
 
 try:
     pkg_name_stub = pickle.load(open(pkg_names_filepath, "rb"))
@@ -213,13 +219,24 @@ def slurp_user_projects_info(
     *,
     extractor=_extract_project_info_from_user_page,
     validate_project_infos=False,
+    cache_results=True,
+    refresh_cache=False,
 ):
     """
     Fetches the list of projects for that user.
     To do so it fetches the html of the user projects page and parses out
     ``name``, ``href`` and ``date`` (of the last release), which can be useful in
     its own, to not have to get it from repeated project info requests.
+
+    If `cache_results` is True (the default), results will be cached.
+    If `refresh_cache` is True, the cache will be refreshed.
     """
+    import json
+
+    cache_file = app_path / "user_projects_info" / f"{user}.json"
+
+    if cache_results and cache_file.exists():
+        return json.load(open(cache_file))
 
     url = pypi_user_furl.format(user=user)
     page_contents = get_url_contents_with_selenium(
@@ -229,7 +246,12 @@ def slurp_user_projects_info(
     proj_infos = b.find_all("a", {"class": "package-snippet"})
     if validate_project_infos:
         _validate_user_projects_infos(proj_infos)
-    return list(map(extractor, proj_infos))
+    projects_info = list(map(extractor, proj_infos))
+
+    if cache_results:
+        json.dump(projects_info, open(cache_file, "w"))
+
+    return projects_info
 
 
 def _validate_user_projects_infos(proj_infos):
