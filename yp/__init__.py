@@ -12,4 +12,5 @@ from yp.tools import (
     latest_release_upload_datetime,  # Get the datetime of the latest release upload
     download_packages_info,  # Download package info from pypi
     extract_main_info,  # Extract main info from package info
+    recent_versions,  # Get recent versions of specific packages
 )

@@ -1,10 +1,38 @@
 """A medley of yp-derived tools for working with pypi"""
 
+from typing import Optional, Iterable
+from collections.abc import Callable
+
+
+def recent_versions(package_names: Iterable[str], egress: Optional[Callable] = None):
+    """
+    Get the most recent version for each package.
+
+    >>> recent_versions(['numpy', 'pandas', 'dol'])  # doctest: +SKIP
+    {'numpy': '1.26.4', 'pandas': '2.1.4', 'dol': '0.2.51'}
+    """
+    from yp import Pypi
+
+    pypi = Pypi()
+    versions = {}
+
+    for pkg_name in package_names:
+        try:
+            info = pypi[pkg_name]
+            versions[pkg_name] = info['info']['version']
+        except Exception:
+            versions[pkg_name] = None
+
+    if egress:
+        return egress(versions)
+    return versions
+
 
 def download_packages_info(package_names, save_store, *, verbose=True):
     from dol import Jsons
     from yp import Pypi
     import os
+    from pathlib import Path
 
     if isinstance(package_names, str):
         if os.path.isfile(package_names):
