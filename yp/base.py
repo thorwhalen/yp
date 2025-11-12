@@ -214,13 +214,16 @@ def get_url_contents_with_selenium(url: str, wait_seconds: int = 5) -> str:
     return page_source
 
 
+_user_projects_info_cache_folder = app_path / "user_projects_info"
+
+
 def slurp_user_projects_info(
     user,
     *,
     extractor=_extract_project_info_from_user_page,
     validate_project_infos=False,
     cache_results=True,
-    refresh_cache=False,
+    refresh=False,
 ):
     """
     Fetches the list of projects for that user.
@@ -229,13 +232,13 @@ def slurp_user_projects_info(
     its own, to not have to get it from repeated project info requests.
 
     If `cache_results` is True (the default), results will be cached.
-    If `refresh_cache` is True, the cache will be refreshed.
+    If `refresh` is True, the cache will be refreshed.
     """
     import json
 
-    cache_file = app_path / "user_projects_info" / f"{user}.json"
+    cache_file = _user_projects_info_cache_folder / f"{user}.json"
 
-    if cache_results and cache_file.exists():
+    if cache_results and cache_file.exists() and not refresh:
         return json.load(open(cache_file))
 
     url = pypi_user_furl.format(user=user)
@@ -252,6 +255,11 @@ def slurp_user_projects_info(
         json.dump(projects_info, open(cache_file, "w"))
 
     return projects_info
+
+
+slurp_user_projects_info.user_projects_info_cache_folder = (
+    _user_projects_info_cache_folder
+)
 
 
 def _validate_user_projects_infos(proj_infos):
