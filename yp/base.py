@@ -19,6 +19,7 @@ from yp.util import dpath, app_path
 pkg_list_url = "https://pypi.org/simple"
 pkg_info_furl = "https://pypi.python.org/pypi/{pkg_name}/json"
 pypi_user_furl = "https://pypi.org/user/{user}/"
+pkg_existence_check_timeout = 10  # seconds, for live JSON-API availability checks
 pkg_names_filepath = dpath("pkg_list.p")
 pkg_names_text_filepath = dpath("pkg_list.txt")
 pkg_name_re = re.compile(r"/simple/([^/]+)/")
@@ -152,8 +153,9 @@ class Pypi(KvReader):
         return info_of_pkg_from_web(pkg_name)
 
     def pkg_has_pypi_page(self, pkg_name):
-        r = requests.get(f"https://pypi.org/project/{pkg_name}")
-        return r.status_code == 200
+        """Return True iff ``pkg_name`` has a project on PyPI (i.e. the name is
+        taken). Uses the authoritative JSON API (see ``_pkg_exists_on_pypi``)."""
+        return _pkg_exists_on_pypi(pkg_name)
 
     def __repr__(self):
         prefix = f"{type(self).__name__}"
@@ -172,15 +174,16 @@ class Pypi(KvReader):
 
     @staticmethod
     def live_is_available(pkg_name):
-        """Check if a package name is available,
-        but live (directly on pypi, not a cache)"""
-        import urllib
+        """Check if a package name is available, live (directly on pypi, not a
+        cache). Returns ``True`` iff the name is free to register.
 
-        try:
-            with urllib.request.urlopen(f"https://pypi.org/project/{pkg_name}") as u:
-                return False
-        except urllib.error.HTTPError as e:
-            return True  # if url is invalid, package exists
+        Uses the PyPI JSON API as the authoritative signal (404 => free,
+        200 => taken), which is more reliable than scraping the HTML project
+        page (that can return a soft 200 for non-existent names in some network
+        environments). PyPI normalizes names per PEP 503, so separator/case
+        variants of a taken name correctly report as unavailable.
+        """
+        return not _pkg_exists_on_pypi(pkg_name)
 
 
 def _get_text_or_none(tag):
@@ -315,6 +318,22 @@ def info_of_pkg_from_web(pkg_name):
     """
     r = request_saving_failure_responses("get", pkg_info_furl.format(pkg_name=pkg_name))
     return r.json()
+
+
+def _pkg_exists_on_pypi(pkg_name, *, timeout=pkg_existence_check_timeout):
+    """Return True iff ``pkg_name`` exists on PyPI, using the authoritative
+    JSON API as the signal (200 => exists/taken, 404 => free).
+
+    A lightweight ``HEAD`` request is used (no payload downloaded). This is more
+    reliable than scraping the HTML ``/project/<name>`` page, which can return a
+    soft 200 for non-existent names in some network environments. PyPI
+    normalizes names per PEP 503, so separator/case variants of a taken name
+    (e.g. ``scikit_learn`` for ``scikit-learn``) also report ``True``.
+    """
+    r = requests.head(
+        pkg_info_furl.format(pkg_name=pkg_name), allow_redirects=True, timeout=timeout
+    )
+    return r.status_code == 200
 
 
 # Utils #################################################################################
