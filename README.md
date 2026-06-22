@@ -63,3 +63,22 @@ The `yp.refresh_saved_pkg_name_stub()` will go fetch the current list of pypi na
 
 I do this from time to time and push the results. You can find a list (as a text file with one name per line) here:
 https://raw.githubusercontent.com/thorwhalen/yp/refs/heads/master/yp/data/pkg_list.txt
+
+
+# Skills
+
+`yp` ships [AI agent skills](https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview)
+(SKILL.md files) that teach an agent how to drive its tools. They live in
+`yp/data/skills/` (so they install with the package) and are mirrored into
+`.claude/skills/` for Claude Code.
+
+| Skill | What it helps you do |
+|---|---|
+| `yp-name-availability` | Find an **available** PyPI name for a new package: brainstorm → fast cached pre-filter → authoritative live check → present the free options. |
+| `yp-name-cache` | Operate the cached PyPI name index: refresh it, check names fast/offline, understand freshness & normalization caveats. |
+| `yp-package-info` | Fetch live PyPI info: full project JSON, a tidy digest, latest version(s), last-upload time, a user's projects, bulk download. |
+| `yp-dependencies` | Inspect an installed package's dependency tree (direct/transitive, required vs installed, version conflicts). |
+
+Install one into an agent host with [`gh skill`](https://github.com/github/gh-skill):
+
+    gh skill install thorwhalen/yp yp-name-availability
