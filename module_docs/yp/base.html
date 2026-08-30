@@ -6,18 +6,18 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>yp.base &mdash; yp 0.0.10 documentation</title>
+  <title>yp.base &mdash; yp 0.0.11 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=a83ce22a"></script>
-      <script src="../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=0c446633"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../_static/copybutton.js?v=f281be69"></script>
@@ -51,20 +51,35 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../yp.html">yp</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">yp.base</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#yp.base.CachedPkgNameStub"><code class="docutils literal notranslate"><span class="pre">CachedPkgNameStub</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#yp.base.CachedPkgNameStub.is_loaded"><code class="docutils literal notranslate"><span class="pre">CachedPkgNameStub.is_loaded</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#yp.base.CachedPkgNameStub.mapping"><code class="docutils literal notranslate"><span class="pre">CachedPkgNameStub.mapping</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#yp.base.CachedPkgNameStub.update_cache"><code class="docutils literal notranslate"><span class="pre">CachedPkgNameStub.update_cache()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#yp.base.MissingPackageNamesError"><code class="docutils literal notranslate"><span class="pre">MissingPackageNamesError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#yp.base.PKG_LIST_FILENAME"><code class="docutils literal notranslate"><span class="pre">PKG_LIST_FILENAME</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#yp.base.Pypi"><code class="docutils literal notranslate"><span class="pre">Pypi</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#yp.base.Pypi.live_is_available"><code class="docutils literal notranslate"><span class="pre">Pypi.live_is_available()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#yp.base.Pypi.pkg_has_pypi_page"><code class="docutils literal notranslate"><span class="pre">Pypi.pkg_has_pypi_page()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#yp.base.Pypi.refresh_cached_package_names"><code class="docutils literal notranslate"><span class="pre">Pypi.refresh_cached_package_names()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#yp.base.Pypi.with_fresh_cached_package_names"><code class="docutils literal notranslate"><span class="pre">Pypi.with_fresh_cached_package_names()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#yp.base.get_updated_pkg_name_stub"><code class="docutils literal notranslate"><span class="pre">get_updated_pkg_name_stub()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#yp.base.info_of_pkg_from_web"><code class="docutils literal notranslate"><span class="pre">info_of_pkg_from_web()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#yp.base.pkg_name_stub"><code class="docutils literal notranslate"><span class="pre">pkg_name_stub</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#yp.base.pkg_names_legacy_pickle_filepath"><code class="docutils literal notranslate"><span class="pre">pkg_names_legacy_pickle_filepath</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#yp.base.pkg_names_package_filepath"><code class="docutils literal notranslate"><span class="pre">pkg_names_package_filepath</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#yp.base.pkg_names_user_filepath"><code class="docutils literal notranslate"><span class="pre">pkg_names_user_filepath</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#yp.base.refresh_saved_pkg_name_stub"><code class="docutils literal notranslate"><span class="pre">refresh_saved_pkg_name_stub()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#yp.base.return_sentinel_on_exception"><code class="docutils literal notranslate"><span class="pre">return_sentinel_on_exception()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#yp.base.slurp_user_projects_info"><code class="docutils literal notranslate"><span class="pre">slurp_user_projects_info()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="deps.html">yp.deps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests.html">yp.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests/test_pkg_name_stub.html">yp.tests.test_pkg_name_stub</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tools.html">yp.tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="util.html">yp.util</a></li>
 </ul>
@@ -95,28 +110,90 @@
              
   <section id="module-yp.base">
 <span id="yp-base"></span><h1>yp.base<a class="headerlink" href="#module-yp.base" title="Link to this heading"></a></h1>
-<p>Base functionality of yb</p>
+<p>Base functionality of yp</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="yp.base.CachedPkgNameStub">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">yp.base.</span></span><span class="sig-name descname"><span class="pre">CachedPkgNameStub</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mapping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/yp/base.html#CachedPkgNameStub"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#yp.base.CachedPkgNameStub" title="Link to this definition"></a></dt>
+<dd><p>The <code class="docutils literal notranslate"><span class="pre">{pkg_name:</span> <span class="pre">pkg_stub}</span></code> mapping of every project on PyPI, loaded lazily.</p>
+<p>Reading the cache is deferred to first use, so <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">yp</span></code> stays cheap and,
+more importantly, never fails because of a missing data file: a missing cache
+raises <code class="docutils literal notranslate"><span class="pre">MissingPackageNamesError</span></code> – with an actionable message – only if and
+when the names are actually needed.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stub</span> <span class="o">=</span> <span class="n">CachedPkgNameStub</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s1">'numpy'</span> <span class="ow">in</span> <span class="n">stub</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stub</span><span class="p">[</span><span class="s1">'scikit-learn'</span><span class="p">]</span>
+<span class="go">'scikit-learn'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">stub</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">100_000</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<dl class="py property">
+<dt class="sig sig-object py" id="yp.base.CachedPkgNameStub.is_loaded">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">is_loaded</span></span><a class="headerlink" href="#yp.base.CachedPkgNameStub.is_loaded" title="Link to this definition"></a></dt>
+<dd><p>Whether the cache has been read yet.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="yp.base.CachedPkgNameStub.mapping">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">mapping</span></span><a class="headerlink" href="#yp.base.CachedPkgNameStub.mapping" title="Link to this definition"></a></dt>
+<dd><p>The underlying <code class="docutils literal notranslate"><span class="pre">dict</span></code>, read from cache on first access.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="yp.base.CachedPkgNameStub.update_cache">
+<span class="sig-name descname"><span class="pre">update_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mapping</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/yp/base.html#CachedPkgNameStub.update_cache"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#yp.base.CachedPkgNameStub.update_cache" title="Link to this definition"></a></dt>
+<dd><p>Replace the in-memory contents, keeping this object’s identity.</p>
+<p>Rebinding the module global instead would leave every <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">yp</span> <span class="pre">import</span>
+<span class="pre">pkg_name_stub</span></code> pointing at the stale mapping.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="yp.base.MissingPackageNamesError">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">yp.base.</span></span><span class="sig-name descname"><span class="pre">MissingPackageNamesError</span></span><a class="reference internal" href="../../_modules/yp/base.html#MissingPackageNamesError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#yp.base.MissingPackageNamesError" title="Link to this definition"></a></dt>
+<dd><p>Raised when yp’s cached list of PyPI project names cannot be found or read.</p>
+<p>Previously this condition was swallowed, which left <code class="docutils literal notranslate"><span class="pre">pkg_name_stub</span></code> undefined
+and surfaced downstream as a bare <code class="docutils literal notranslate"><span class="pre">ImportError:</span> <span class="pre">cannot</span> <span class="pre">import</span> <span class="pre">name</span>
+<span class="pre">'pkg_name_stub'</span></code> – with no hint as to the real cause.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="yp.base.PKG_LIST_FILENAME">
+<span class="sig-prename descclassname"><span class="pre">yp.base.</span></span><span class="sig-name descname"><span class="pre">PKG_LIST_FILENAME</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'pkg_list.tsv.gz'</span></span><a class="headerlink" href="#yp.base.PKG_LIST_FILENAME" title="Link to this definition"></a></dt>
+<dd><p>gzipped TSV of <code class="docutils literal notranslate"><span class="pre">pkg_name&lt;TAB&gt;pkg_stub</span></code> lines, where the
+tab and stub are omitted for the ~96% of projects whose stub equals their name.
+That keeps the copy shipped in the distribution at ~4MB, against ~27MB for the
+equivalent pickle, and avoids unpickling data at import time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Canonical cache file</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="yp.base.Pypi">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">yp.base.</span></span><span class="sig-name descname"><span class="pre">Pypi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info_extractor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proj_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict_getitem</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/yp/base.html#Pypi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#yp.base.Pypi" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">yp.base.</span></span><span class="sig-name descname"><span class="pre">Pypi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">info_extractor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proj_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict_getitem</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/yp/base.html#Pypi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#yp.base.Pypi" title="Link to this definition"></a></dt>
 <dd><p>Get a mapping of all of <code class="docutils literal notranslate"><span class="pre">pypi</span></code> projects.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Pypi</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>The keys of this mapping are the project names. There are lots!</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>  
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
 <span class="go">405120</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="s1">&#39;numpy&#39;</span> <span class="ow">in</span> <span class="n">p</span> <span class="ow">and</span> <span class="s1">&#39;dol&#39;</span> <span class="ow">in</span> <span class="n">p</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s1">'numpy'</span> <span class="ow">in</span> <span class="n">p</span> <span class="ow">and</span> <span class="s1">'dol'</span> <span class="ow">in</span> <span class="n">p</span>
 <span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="s1">&#39;no_way_this_is_a_package&#39;</span> <span class="ow">in</span> <span class="n">p</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s1">'no_way_this_is_a_package'</span> <span class="ow">in</span> <span class="n">p</span>
 <span class="go">False</span>
 </pre></div>
 </div>
 <p>The values of the mapping are the corresponding project’s info, which is a
 nested dict of good stuff.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">info</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">&#39;numpy&#39;</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
-<span class="go">[&#39;info&#39;, &#39;last_serial&#39;, &#39;releases&#39;, &#39;urls&#39;, &#39;vulnerabilities&#39;]</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">info</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">'numpy'</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">{</span><span class="s1">'info'</span><span class="p">,</span> <span class="s1">'last_serial'</span><span class="p">,</span> <span class="s1">'releases'</span><span class="p">,</span> <span class="s1">'urls'</span><span class="p">}</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+<span class="go">True</span>
 </pre></div>
 </div>
 <p>Tip: To only get the info you want, you’ll</p>
@@ -125,19 +202,19 @@ nested dict of good stuff.</p>
 but the list of all project names is actually taken from a local file.
 You should update that file regularly (but not TOO regularly!) to be in sync
 with pypi.org. To do so, do this:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Pypi</span><span class="o">.</span><span class="n">refresh_cached_package_names</span><span class="p">()</span>  
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Pypi</span><span class="o">.</span><span class="n">refresh_cached_package_names</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>If, on the other hand, you don’t want all projects of Pypi to be the collection
 you’re working with, you can specify what <code class="docutils literal notranslate"><span class="pre">user</span></code> they should belong to:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Pypi</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="s1">&#39;thorwhalen1&#39;</span><span class="p">)</span>  
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>  
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Pypi</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="s1">'thorwhalen1'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
 <span class="go">131</span>
 </pre></div>
 </div>
 <p>You can also explicitly give <code class="docutils literal notranslate"><span class="pre">Pypi</span></code> a collection of projects you want to work
 with:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Pypi</span><span class="p">(</span><span class="n">proj_names</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;numpy&#39;</span><span class="p">,</span> <span class="s1">&#39;pandas&#39;</span><span class="p">,</span> <span class="s1">&#39;dol&#39;</span><span class="p">})</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Pypi</span><span class="p">(</span><span class="n">proj_names</span><span class="o">=</span><span class="p">{</span><span class="s1">'numpy'</span><span class="p">,</span> <span class="s1">'pandas'</span><span class="p">,</span> <span class="s1">'dol'</span><span class="p">})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
 <span class="go">3</span>
 </pre></div>
@@ -146,20 +223,32 @@ with:</p>
 you want to work with in all kinds of ways!</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="yp.base.Pypi.live_is_available">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">live_is_available</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pkg_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/yp/base.html#Pypi.live_is_available"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#yp.base.Pypi.live_is_available" title="Link to this definition"></a></dt>
-<dd><p>Check if a package name is available,
-but live (directly on pypi, not a cache)</p>
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">live_is_available</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pkg_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/yp/base.html#Pypi.live_is_available"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#yp.base.Pypi.live_is_available" title="Link to this definition"></a></dt>
+<dd><p>Check if a package name is available, live (directly on pypi, not a
+cache). Returns <code class="docutils literal notranslate"><span class="pre">True</span></code> iff the name is free to register.</p>
+<p>Uses the PyPI JSON API as the authoritative signal (404 =&gt; free,
+200 =&gt; taken), which is more reliable than scraping the HTML project
+page (that can return a soft 200 for non-existent names in some network
+environments). PyPI normalizes names per PEP 503, so separator/case
+variants of a taken name correctly report as unavailable.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="yp.base.Pypi.pkg_has_pypi_page">
+<span class="sig-name descname"><span class="pre">pkg_has_pypi_page</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pkg_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/yp/base.html#Pypi.pkg_has_pypi_page"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#yp.base.Pypi.pkg_has_pypi_page" title="Link to this definition"></a></dt>
+<dd><p>Return True iff <code class="docutils literal notranslate"><span class="pre">pkg_name</span></code> has a project on PyPI (i.e. the name is
+taken). Uses the authoritative JSON API (see <code class="docutils literal notranslate"><span class="pre">_pkg_exists_on_pypi</span></code>).</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="yp.base.Pypi.refresh_cached_package_names">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">refresh_cached_package_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#yp.base.Pypi.refresh_cached_package_names" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">refresh_cached_package_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#yp.base.Pypi.refresh_cached_package_names" title="Link to this definition"></a></dt>
 <dd><p>Download and save a fresh copy of pypi’s package names</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="yp.base.Pypi.with_fresh_cached_package_names">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">with_fresh_cached_package_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/yp/base.html#Pypi.with_fresh_cached_package_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#yp.base.Pypi.with_fresh_cached_package_names" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">with_fresh_cached_package_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/yp/base.html#Pypi.with_fresh_cached_package_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#yp.base.Pypi.with_fresh_cached_package_names" title="Link to this definition"></a></dt>
 <dd><p>Download and save a fresh copy of pypi’s package names</p>
 </dd></dl>
 
@@ -180,27 +269,65 @@ but live (directly on pypi, not a cache)</p>
 :return:</p>
 </dd></dl>
 
+<dl class="py data">
+<dt class="sig sig-object py" id="yp.base.pkg_name_stub">
+<span class="sig-prename descclassname"><span class="pre">yp.base.</span></span><span class="sig-name descname"><span class="pre">pkg_name_stub</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">CachedPkgNameStub(&lt;834011</span> <span class="pre">names&gt;)</span></span><a class="headerlink" href="#yp.base.pkg_name_stub" title="Link to this definition"></a></dt>
+<dd><p>Mapping of every PyPI project name to its normalized stub. Loaded on first use.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="yp.base.pkg_names_legacy_pickle_filepath">
+<span class="sig-prename descclassname"><span class="pre">yp.base.</span></span><span class="sig-name descname"><span class="pre">pkg_names_legacy_pickle_filepath</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PosixPath('/home/runner/work/yp/yp/yp/data/pkg_list.p')</span></span><a class="headerlink" href="#yp.base.pkg_names_legacy_pickle_filepath" title="Link to this definition"></a></dt>
+<dd><p>Pre-0.0.12 pickle cache, still read when no gzipped TSV is found.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="yp.base.pkg_names_package_filepath">
+<span class="sig-prename descclassname"><span class="pre">yp.base.</span></span><span class="sig-name descname"><span class="pre">pkg_names_package_filepath</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PosixPath('/home/runner/work/yp/yp/yp/data/pkg_list.tsv.gz')</span></span><a class="headerlink" href="#yp.base.pkg_names_package_filepath" title="Link to this definition"></a></dt>
+<dd><p>Seed copy shipped inside the installed distribution (read-only in most installs).</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="yp.base.pkg_names_user_filepath">
+<span class="sig-prename descclassname"><span class="pre">yp.base.</span></span><span class="sig-name descname"><span class="pre">pkg_names_user_filepath</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PosixPath('/home/runner/.config/yp/pkg_list.tsv.gz')</span></span><a class="headerlink" href="#yp.base.pkg_names_user_filepath" title="Link to this definition"></a></dt>
+<dd><p>Where <code class="docutils literal notranslate"><span class="pre">refresh_saved_pkg_name_stub</span></code> writes; takes precedence when it exists.</p>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="yp.base.refresh_saved_pkg_name_stub">
-<span class="sig-prename descclassname"><span class="pre">yp.base.</span></span><span class="sig-name descname"><span class="pre">refresh_saved_pkg_name_stub</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/yp/base.html#refresh_saved_pkg_name_stub"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#yp.base.refresh_saved_pkg_name_stub" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">yp.base.</span></span><span class="sig-name descname"><span class="pre">refresh_saved_pkg_name_stub</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_to</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_text_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/yp/base.html#refresh_saved_pkg_name_stub"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#yp.base.refresh_saved_pkg_name_stub" title="Link to this definition"></a></dt>
 <dd><p>Update the <code class="docutils literal notranslate"><span class="pre">{pkg_name:</span> <span class="pre">pkg_stub}</span></code> stored data with a fresh call to
-<code class="docutils literal notranslate"><span class="pre">get_updated_pkg_name_stub</span></code></p>
+<code class="docutils literal notranslate"><span class="pre">get_updated_pkg_name_stub</span></code>.</p>
+<p>The refreshed copy is written to the user’s app folder by default, not into the
+installed package, which is read-only in many installs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_to</strong> – Where to write the gzipped TSV cache.
+Defaults to <code class="docutils literal notranslate"><span class="pre">pkg_names_user_filepath</span></code>.</p></li>
+<li><p><strong>write_text_file</strong> – Also write a plain <code class="docutils literal notranslate"><span class="pre">pkg_list.txt</span></code> of the names, one per
+line, alongside <code class="docutils literal notranslate"><span class="pre">save_to</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="yp.base.return_sentinel_on_exception">
-<span class="sig-prename descclassname"><span class="pre">yp.base.</span></span><span class="sig-name descname"><span class="pre">return_sentinel_on_exception</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">caught_exceptions=(&lt;class</span> <span class="pre">'Exception'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sentinel=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/yp/base.html#return_sentinel_on_exception"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#yp.base.return_sentinel_on_exception" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">yp.base.</span></span><span class="sig-name descname"><span class="pre">return_sentinel_on_exception</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">caught_exceptions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(&lt;class</span> <span class="pre">'Exception'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sentinel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/yp/base.html#return_sentinel_on_exception"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#yp.base.return_sentinel_on_exception" title="Link to this definition"></a></dt>
 <dd><p>Decorates a function so it will return a sentinel (default None) instead of
 raising an exception</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="yp.base.slurp_user_projects_info">
-<span class="sig-prename descclassname"><span class="pre">yp.base.</span></span><span class="sig-name descname"><span class="pre">slurp_user_projects_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extractor=&lt;function</span> <span class="pre">_extract_project_info_from_user_page&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validate_project_infos=False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/yp/base.html#slurp_user_projects_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#yp.base.slurp_user_projects_info" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">yp.base.</span></span><span class="sig-name descname"><span class="pre">slurp_user_projects_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extractor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;function</span> <span class="pre">_extract_project_info_from_user_page&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validate_project_infos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/yp/base.html#slurp_user_projects_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#yp.base.slurp_user_projects_info" title="Link to this definition"></a></dt>
 <dd><p>Fetches the list of projects for that user.
 To do so it fetches the html of the user projects page and parses out
 <code class="docutils literal notranslate"><span class="pre">name</span></code>, <code class="docutils literal notranslate"><span class="pre">href</span></code> and <code class="docutils literal notranslate"><span class="pre">date</span></code> (of the last release), which can be useful in
 its own, to not have to get it from repeated project info requests.</p>
+<p>If <cite>cache_results</cite> is True (the default), results will be cached.
+If <cite>refresh</cite> is True, the cache will be refreshed.</p>
 </dd></dl>
 
 </section>
@@ -216,7 +343,7 @@ its own, to not have to get it from repeated project info requests.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright NO COPYRIGHT.</p>
+    <p></p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

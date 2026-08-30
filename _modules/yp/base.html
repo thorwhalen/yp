@@ -5,18 +5,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>yp.base &mdash; yp 0.0.10 documentation</title>
+  <title>yp.base &mdash; yp 0.0.11 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=a83ce22a"></script>
-      <script src="../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=0c446633"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../_static/copybutton.js?v=f281be69"></script>
@@ -49,6 +49,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/yp.html">yp</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/yp/base.html">yp.base</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/yp/deps.html">yp.deps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/yp/tests.html">yp.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/yp/tests/test_pkg_name_stub.html">yp.tests.test_pkg_name_stub</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/yp/tools.html">yp.tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/yp/util.html">yp.util</a></li>
 </ul>
@@ -78,38 +80,171 @@
            <div itemprop="articleBody">
              
   <h1>Source code for yp.base</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Base functionality of yb&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Base functionality of yp"""</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gzip</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">wraps</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pickle</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mapping</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">requests.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">RequestException</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">bs4</span><span class="w"> </span><span class="kn">import</span> <span class="n">BeautifulSoup</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">dol</span><span class="w"> </span><span class="kn">import</span> <span class="n">KvReader</span><span class="p">,</span> <span class="n">wrap_kvs</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">yp.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">dpath</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">yp.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">dpath</span><span class="p">,</span> <span class="n">app_path</span>
 
-<span class="n">pkg_list_url</span> <span class="o">=</span> <span class="s2">&quot;https://pypi.org/simple&quot;</span>
-<span class="n">pkg_info_furl</span> <span class="o">=</span> <span class="s2">&quot;https://pypi.python.org/pypi/</span><span class="si">{pkg_name}</span><span class="s2">/json&quot;</span>
-<span class="n">pypi_user_furl</span> <span class="o">=</span> <span class="s2">&quot;https://pypi.org/user/</span><span class="si">{user}</span><span class="s2">/&quot;</span>
-<span class="n">pkg_names_filepath</span> <span class="o">=</span> <span class="n">dpath</span><span class="p">(</span><span class="s2">&quot;pkg_list.p&quot;</span><span class="p">)</span>
-<span class="n">pkg_names_text_filepath</span> <span class="o">=</span> <span class="n">dpath</span><span class="p">(</span><span class="s2">&quot;pkg_list.txt&quot;</span><span class="p">)</span>
-<span class="n">pkg_name_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;/simple/([^/]+)/&quot;</span><span class="p">)</span>
-<span class="n">nums_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\d+&quot;</span><span class="p">)</span>
+<span class="n">pkg_list_url</span> <span class="o">=</span> <span class="s2">"https://pypi.org/simple"</span>
+<span class="n">pkg_info_furl</span> <span class="o">=</span> <span class="s2">"https://pypi.python.org/pypi/</span><span class="si">{pkg_name}</span><span class="s2">/json"</span>
+<span class="n">pypi_user_furl</span> <span class="o">=</span> <span class="s2">"https://pypi.org/user/</span><span class="si">{user}</span><span class="s2">/"</span>
+<span class="n">pkg_existence_check_timeout</span> <span class="o">=</span> <span class="mi">10</span>  <span class="c1"># seconds, for live JSON-API availability checks</span>
+<span class="c1">#: Canonical cache file: gzipped TSV of ``pkg_name&lt;TAB&gt;pkg_stub`` lines, where the</span>
+<span class="c1">#: tab and stub are omitted for the ~96% of projects whose stub equals their name.</span>
+<span class="c1">#: That keeps the copy shipped in the distribution at ~4MB, against ~27MB for the</span>
+<span class="c1">#: equivalent pickle, and avoids unpickling data at import time.</span>
+<span class="n">PKG_LIST_FILENAME</span> <span class="o">=</span> <span class="s2">"pkg_list.tsv.gz"</span>
 
-<span class="k">try</span><span class="p">:</span>
-    <span class="n">pkg_name_stub</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">pkg_names_filepath</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">))</span>
-<span class="k">except</span><span class="p">:</span>
-    <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="c1">#: Seed copy shipped inside the installed distribution (read-only in most installs).</span>
+<span class="n">pkg_names_package_filepath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">dpath</span><span class="p">(</span><span class="n">PKG_LIST_FILENAME</span><span class="p">))</span>
+<span class="c1">#: Where ``refresh_saved_pkg_name_stub`` writes; takes precedence when it exists.</span>
+<span class="n">pkg_names_user_filepath</span> <span class="o">=</span> <span class="n">app_path</span> <span class="o">/</span> <span class="n">PKG_LIST_FILENAME</span>
+<span class="c1">#: Pre-0.0.12 pickle cache, still read when no gzipped TSV is found.</span>
+<span class="n">pkg_names_legacy_pickle_filepath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">dpath</span><span class="p">(</span><span class="s2">"pkg_list.p"</span><span class="p">))</span>
 
-    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;Couldn&#39;t unpickle </span><span class="si">{</span><span class="n">pkg_names_filepath</span><span class="si">}</span><span class="s2">. Some functionality might not work&quot;</span>
+<span class="n">pkg_names_filepath</span> <span class="o">=</span> <span class="n">pkg_names_package_filepath</span>  <span class="c1"># backwards-compatible alias</span>
+<span class="n">pkg_names_text_filepath</span> <span class="o">=</span> <span class="n">dpath</span><span class="p">(</span><span class="s2">"pkg_list.txt"</span><span class="p">)</span>
+<span class="n">pkg_name_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"/simple/([^/]+)/"</span><span class="p">)</span>
+<span class="n">nums_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\d+"</span><span class="p">)</span>
+
+<span class="n">user_projects_info_path</span> <span class="o">=</span> <span class="n">app_path</span> <span class="o">/</span> <span class="s2">"user_projects_info"</span>
+<span class="c1"># ensure directory exists</span>
+<span class="n">user_projects_info_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="MissingPackageNamesError">
+<a class="viewcode-back" href="../../module_docs/yp/base.html#yp.base.MissingPackageNamesError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MissingPackageNamesError</span><span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Raised when yp's cached list of PyPI project names cannot be found or read.</span>
+
+<span class="sd">    Previously this condition was swallowed, which left ``pkg_name_stub`` undefined</span>
+<span class="sd">    and surfaced downstream as a bare ``ImportError: cannot import name</span>
+<span class="sd">    'pkg_name_stub'`` -- with no hint as to the real cause.</span>
+<span class="sd">    """</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_encode_pkg_name_stub</span><span class="p">(</span><span class="n">pkg_name_stub</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Encode a ``{pkg_name: pkg_stub}`` mapping as gzipped TSV bytes."""</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">name</span> <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="n">stub</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="se">\t</span><span class="si">{</span><span class="n">stub</span><span class="si">}</span><span class="s2">"</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">stub</span> <span class="ow">in</span> <span class="n">pkg_name_stub</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
     <span class="p">)</span>
+    <span class="c1"># mtime=0 keeps the output byte-for-byte reproducible across builds</span>
+    <span class="k">return</span> <span class="n">gzip</span><span class="o">.</span><span class="n">compress</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">"utf-8"</span><span class="p">),</span> <span class="mi">6</span><span class="p">,</span> <span class="n">mtime</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_decode_pkg_name_stub</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Inverse of ``_encode_pkg_name_stub``."""</span>
+    <span class="n">pkg_name_stub</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">gzip</span><span class="o">.</span><span class="n">decompress</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">"utf-8"</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">line</span><span class="p">:</span>
+            <span class="n">name</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">stub</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="s2">"</span><span class="se">\t</span><span class="s2">"</span><span class="p">)</span>
+            <span class="n">pkg_name_stub</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">stub</span> <span class="ow">or</span> <span class="n">name</span>
+    <span class="k">return</span> <span class="n">pkg_name_stub</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_read_pkg_name_stub</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Read the cached ``{pkg_name: pkg_stub}`` mapping, freshest source first.</span>
+
+<span class="sd">    Raises ``MissingPackageNamesError``, with instructions, if no cache is readable.</span>
+<span class="sd">    """</span>
+    <span class="k">for</span> <span class="n">filepath</span> <span class="ow">in</span> <span class="p">(</span><span class="n">pkg_names_user_filepath</span><span class="p">,</span> <span class="n">pkg_names_package_filepath</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">filepath</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">_decode_pkg_name_stub</span><span class="p">(</span><span class="n">filepath</span><span class="o">.</span><span class="n">read_bytes</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">pkg_names_legacy_pickle_filepath</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>  <span class="c1"># pre-0.0.12 cache</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">pkg_names_legacy_pickle_filepath</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="n">MissingPackageNamesError</span><span class="p">(</span>
+        <span class="s2">"yp could not find its cached list of PyPI project names.</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="s2">"Looked for:</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">pkg_names_user_filepath</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">pkg_names_package_filepath</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">pkg_names_legacy_pickle_filepath</span><span class="si">}</span><span class="s2"> (legacy)</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="s2">"This usually means yp was installed from a distribution built without its "</span>
+        <span class="s2">"data files. To download and cache the list yourself (a few MB from "</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">pkg_list_url</span><span class="si">}</span><span class="s2">), run:</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="s2">"    python -c 'import yp; yp.refresh_saved_pkg_name_stub()'"</span>
+    <span class="p">)</span>
+
+
+<div class="viewcode-block" id="CachedPkgNameStub">
+<a class="viewcode-back" href="../../module_docs/yp/base.html#yp.base.CachedPkgNameStub">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CachedPkgNameStub</span><span class="p">(</span><span class="n">Mapping</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""The ``{pkg_name: pkg_stub}`` mapping of every project on PyPI, loaded lazily.</span>
+
+<span class="sd">    Reading the cache is deferred to first use, so ``import yp`` stays cheap and,</span>
+<span class="sd">    more importantly, never fails because of a missing data file: a missing cache</span>
+<span class="sd">    raises ``MissingPackageNamesError`` -- with an actionable message -- only if and</span>
+<span class="sd">    when the names are actually needed.</span>
+
+<span class="sd">    &gt;&gt;&gt; stub = CachedPkgNameStub()</span>
+<span class="sd">    &gt;&gt;&gt; 'numpy' in stub</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; stub['scikit-learn']</span>
+<span class="sd">    'scikit-learn'</span>
+<span class="sd">    &gt;&gt;&gt; len(stub) &gt; 100_000</span>
+<span class="sd">    True</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapping</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mapping</span> <span class="o">=</span> <span class="n">mapping</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""The underlying ``dict``, read from cache on first access."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mapping</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_mapping</span> <span class="o">=</span> <span class="n">_read_pkg_name_stub</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mapping</span>
+
+<div class="viewcode-block" id="CachedPkgNameStub.update_cache">
+<a class="viewcode-back" href="../../module_docs/yp/base.html#yp.base.CachedPkgNameStub.update_cache">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapping</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Replace the in-memory contents, keeping this object's identity.</span>
+
+<span class="sd">        Rebinding the module global instead would leave every ``from yp import</span>
+<span class="sd">        pkg_name_stub`` pointing at the stale mapping.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mapping</span> <span class="o">=</span> <span class="n">mapping</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_loaded</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Whether the cache has been read yet."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mapping</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mapping</span><span class="p">)</span><span class="si">}</span><span class="s2"> names"</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_loaded</span> <span class="k">else</span> <span class="s2">"not loaded yet"</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(&lt;</span><span class="si">{</span><span class="n">state</span><span class="si">}</span><span class="s2">&gt;)"</span></div>
+
+
+
+<span class="c1">#: Mapping of every PyPI project name to its normalized stub. Loaded on first use.</span>
+<span class="n">pkg_name_stub</span> <span class="o">=</span> <span class="n">CachedPkgNameStub</span><span class="p">()</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">asis</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
@@ -119,7 +254,7 @@
 <div class="viewcode-block" id="Pypi">
 <a class="viewcode-back" href="../../module_docs/yp/base.html#yp.base.Pypi">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Pypi</span><span class="p">(</span><span class="n">KvReader</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Get a mapping of all of ``pypi`` projects.</span>
 
 <span class="sd">    &gt;&gt;&gt; p = Pypi()</span>
@@ -128,19 +263,19 @@
 
 <span class="sd">    &gt;&gt;&gt; len(p)  # doctest: +SKIP</span>
 <span class="sd">    405120</span>
-<span class="sd">    &gt;&gt;&gt; &#39;numpy&#39; in p and &#39;dol&#39; in p</span>
+<span class="sd">    &gt;&gt;&gt; 'numpy' in p and 'dol' in p</span>
 <span class="sd">    True</span>
-<span class="sd">    &gt;&gt;&gt; &#39;no_way_this_is_a_package&#39; in p</span>
+<span class="sd">    &gt;&gt;&gt; 'no_way_this_is_a_package' in p</span>
 <span class="sd">    False</span>
 
-<span class="sd">    The values of the mapping are the corresponding project&#39;s info, which is a</span>
+<span class="sd">    The values of the mapping are the corresponding project's info, which is a</span>
 <span class="sd">    nested dict of good stuff.</span>
 
-<span class="sd">    &gt;&gt;&gt; info = p[&#39;numpy&#39;]</span>
-<span class="sd">    &gt;&gt;&gt; list(info)</span>
-<span class="sd">    [&#39;info&#39;, &#39;last_serial&#39;, &#39;releases&#39;, &#39;urls&#39;, &#39;vulnerabilities&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; info = p['numpy']</span>
+<span class="sd">    &gt;&gt;&gt; {'info', 'last_serial', 'releases', 'urls'}.issubset(info)</span>
+<span class="sd">    True</span>
 
-<span class="sd">    Tip: To only get the info you want, you&#39;ll</span>
+<span class="sd">    Tip: To only get the info you want, you'll</span>
 
 <span class="sd">    The project info is obtained, live, making requests to the</span>
 <span class="sd">    ``https://pypi.python.org/pypi/{pkg_name}/json`` API,</span>
@@ -150,24 +285,24 @@
 
 <span class="sd">    &gt;&gt;&gt; Pypi.refresh_cached_package_names()  # doctest: +SKIP</span>
 
-<span class="sd">    If, on the other hand, you don&#39;t want all projects of Pypi to be the collection</span>
-<span class="sd">    you&#39;re working with, you can specify what ``user`` they should belong to:</span>
+<span class="sd">    If, on the other hand, you don't want all projects of Pypi to be the collection</span>
+<span class="sd">    you're working with, you can specify what ``user`` they should belong to:</span>
 
-<span class="sd">    &gt;&gt;&gt; p = Pypi(user=&#39;thorwhalen1&#39;)  # doctest: +SKIP</span>
+<span class="sd">    &gt;&gt;&gt; p = Pypi(user='thorwhalen1')  # doctest: +SKIP</span>
 <span class="sd">    &gt;&gt;&gt; len(p)  # doctest: +SKIP</span>
 <span class="sd">    131</span>
 
 <span class="sd">    You can also explicitly give ``Pypi`` a collection of projects you want to work</span>
 <span class="sd">    with:</span>
 
-<span class="sd">    &gt;&gt;&gt; p = Pypi(proj_names={&#39;numpy&#39;, &#39;pandas&#39;, &#39;dol&#39;})</span>
+<span class="sd">    &gt;&gt;&gt; p = Pypi(proj_names={'numpy', 'pandas', 'dol'})</span>
 <span class="sd">    &gt;&gt;&gt; len(p)</span>
 <span class="sd">    3</span>
 
 <span class="sd">    You can do a lot more by simply using the tools of ``dol`` to change the mapping</span>
 <span class="sd">    you want to work with in all kinds of ways!</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">_src_kind</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">_src_info</span> <span class="o">=</span> <span class="kc">None</span>
@@ -177,21 +312,21 @@
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">info_extractor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">proj_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">strict_getitem</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        :param strict_getitem: By default, any valid package can be fetched,</span>
 <span class="sd">        not just those contained in the particular ``Pypi` instance.</span>
 <span class="sd">        Set ``strict_getitem`` to ``True`` will, on the other hand, do this check,</span>
-<span class="sd">        and raise a ``KeyError`` if a key that&#39;s not in the instance is requested.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        and raise a ``KeyError`` if a key that's not in the instance is requested.</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">proj_names</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_src_kind</span> <span class="o">=</span> <span class="s2">&quot;collection&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_src_kind</span> <span class="o">=</span> <span class="s2">"collection"</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">proj_names</span> <span class="o">=</span> <span class="n">proj_names</span>
         <span class="k">elif</span> <span class="n">user</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_src_kind</span> <span class="o">=</span> <span class="s2">&quot;user&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_src_kind</span> <span class="o">=</span> <span class="s2">"user"</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_src_info</span> <span class="o">=</span> <span class="n">user</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">proj_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">slurp_user_projects_info</span><span class="p">(</span><span class="n">user</span><span class="p">)]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">proj_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">slurp_user_projects_info</span><span class="p">(</span><span class="n">user</span><span class="p">)]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_src_kind</span> <span class="o">=</span> <span class="s2">&quot;all&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_src_kind</span> <span class="o">=</span> <span class="s2">"all"</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">proj_names</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">pkg_name_stub</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">strict_getitem</span> <span class="o">=</span> <span class="n">strict_getitem</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">info_extractor</span> <span class="o">=</span> <span class="n">info_extractor</span> <span class="ow">or</span> <span class="n">asis</span>
@@ -200,7 +335,7 @@
 <a class="viewcode-back" href="../../module_docs/yp/base.html#yp.base.Pypi.with_fresh_cached_package_names">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">with_fresh_cached_package_names</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Download and save a fresh copy of pypi&#39;s package names&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Download and save a fresh copy of pypi's package names"""</span>
         <span class="n">refresh_saved_pkg_name_stub</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div>
 
@@ -213,12 +348,12 @@
         <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">proj_names</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Note that any valid package can be fetched, not just those contained in the</span>
 <span class="sd">        particular ``Pypi`` instance.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">strict_getitem</span> <span class="ow">and</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">proj_names</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Key not found in this Pypi instance: </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Key not found in this Pypi instance: </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">info_extractor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">live_package_info</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
@@ -230,20 +365,24 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">live_package_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pkg_name</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">info_of_pkg_from_web</span><span class="p">(</span><span class="n">pkg_name</span><span class="p">)</span>
 
+<div class="viewcode-block" id="Pypi.pkg_has_pypi_page">
+<a class="viewcode-back" href="../../module_docs/yp/base.html#yp.base.Pypi.pkg_has_pypi_page">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">pkg_has_pypi_page</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pkg_name</span><span class="p">):</span>
-        <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;https://pypi.org/project/</span><span class="si">{</span><span class="n">pkg_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>
+<span class="w">        </span><span class="sd">"""Return True iff ``pkg_name`` has a project on PyPI (i.e. the name is</span>
+<span class="sd">        taken). Uses the authoritative JSON API (see ``_pkg_exists_on_pypi``)."""</span>
+        <span class="k">return</span> <span class="n">_pkg_exists_on_pypi</span><span class="p">(</span><span class="n">pkg_name</span><span class="p">)</span></div>
+
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_src_kind</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
-            <span class="n">suffix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;()&quot;</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_src_kind</span> <span class="o">==</span> <span class="s2">&quot;user&quot;</span><span class="p">:</span>
-            <span class="n">suffix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;(user=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="si">}</span><span class="s2">)&quot;</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_src_kind</span> <span class="o">==</span> <span class="s2">&quot;collection&quot;</span><span class="p">:</span>
-            <span class="n">suffix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;(&lt;a collection of length </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">proj_names</span><span class="p">)</span><span class="si">}</span><span class="s2">&gt;)&quot;</span>
+        <span class="n">prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">"</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_src_kind</span> <span class="o">==</span> <span class="s2">"all"</span><span class="p">:</span>
+            <span class="n">suffix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"()"</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_src_kind</span> <span class="o">==</span> <span class="s2">"user"</span><span class="p">:</span>
+            <span class="n">suffix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"(user=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="si">}</span><span class="s2">)"</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_src_kind</span> <span class="o">==</span> <span class="s2">"collection"</span><span class="p">:</span>
+            <span class="n">suffix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"(&lt;a collection of length </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">proj_names</span><span class="p">)</span><span class="si">}</span><span class="s2">&gt;)"</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">suffix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;(...)&quot;</span>
+            <span class="n">suffix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"(...)"</span>
         <span class="k">return</span> <span class="n">prefix</span> <span class="o">+</span> <span class="n">suffix</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">is_available</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">word</span><span class="p">):</span>
@@ -253,15 +392,16 @@
 <a class="viewcode-back" href="../../module_docs/yp/base.html#yp.base.Pypi.live_is_available">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">live_is_available</span><span class="p">(</span><span class="n">pkg_name</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if a package name is available,</span>
-<span class="sd">        but live (directly on pypi, not a cache)&quot;&quot;&quot;</span>
-        <span class="kn">import</span><span class="w"> </span><span class="nn">urllib</span>
+<span class="w">        </span><span class="sd">"""Check if a package name is available, live (directly on pypi, not a</span>
+<span class="sd">        cache). Returns ``True`` iff the name is free to register.</span>
 
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">with</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;https://pypi.org/project/</span><span class="si">{</span><span class="n">pkg_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">u</span><span class="p">:</span>
-                <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">except</span> <span class="n">urllib</span><span class="o">.</span><span class="n">error</span><span class="o">.</span><span class="n">HTTPError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">True</span>  <span class="c1"># if url is invalid, package exists</span></div>
+<span class="sd">        Uses the PyPI JSON API as the authoritative signal (404 =&gt; free,</span>
+<span class="sd">        200 =&gt; taken), which is more reliable than scraping the HTML project</span>
+<span class="sd">        page (that can return a soft 200 for non-existent names in some network</span>
+<span class="sd">        environments). PyPI normalizes names per PEP 503, so separator/case</span>
+<span class="sd">        variants of a taken name correctly report as unavailable.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="n">_pkg_exists_on_pypi</span><span class="p">(</span><span class="n">pkg_name</span><span class="p">)</span></div>
 </div>
 
 
@@ -272,12 +412,12 @@
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_extract_project_info_from_user_page</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
     <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
-        <span class="n">name</span><span class="o">=</span><span class="n">_get_text_or_none</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;h3&quot;</span><span class="p">)),</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">_get_text_or_none</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"h3"</span><span class="p">)),</span>
         <span class="n">description</span><span class="o">=</span><span class="n">_get_text_or_none</span><span class="p">(</span>
-            <span class="n">node</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;package-snippet__description&quot;</span><span class="p">})</span>
+            <span class="n">node</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"p"</span><span class="p">,</span> <span class="p">{</span><span class="s2">"class"</span><span class="p">:</span> <span class="s2">"package-snippet__description"</span><span class="p">})</span>
         <span class="p">),</span>
-        <span class="n">date</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;datetime&quot;</span><span class="p">),</span>
-        <span class="n">href</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;href&quot;</span><span class="p">),</span>
+        <span class="n">date</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"time"</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"datetime"</span><span class="p">),</span>
+        <span class="n">href</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"href"</span><span class="p">),</span>
     <span class="p">)</span>
 
 
@@ -297,6 +437,9 @@
     <span class="k">return</span> <span class="n">page_source</span>
 
 
+<span class="n">_user_projects_info_cache_folder</span> <span class="o">=</span> <span class="n">app_path</span> <span class="o">/</span> <span class="s2">"user_projects_info"</span>
+
+
 <div class="viewcode-block" id="slurp_user_projects_info">
 <a class="viewcode-back" href="../../module_docs/yp/base.html#yp.base.slurp_user_projects_info">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">slurp_user_projects_info</span><span class="p">(</span>
@@ -304,73 +447,101 @@
     <span class="o">*</span><span class="p">,</span>
     <span class="n">extractor</span><span class="o">=</span><span class="n">_extract_project_info_from_user_page</span><span class="p">,</span>
     <span class="n">validate_project_infos</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">cache_results</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">refresh</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Fetches the list of projects for that user.</span>
 <span class="sd">    To do so it fetches the html of the user projects page and parses out</span>
 <span class="sd">    ``name``, ``href`` and ``date`` (of the last release), which can be useful in</span>
 <span class="sd">    its own, to not have to get it from repeated project info requests.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+
+<span class="sd">    If `cache_results` is True (the default), results will be cached.</span>
+<span class="sd">    If `refresh` is True, the cache will be refreshed.</span>
+<span class="sd">    """</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+    <span class="n">cache_file</span> <span class="o">=</span> <span class="n">_user_projects_info_cache_folder</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">user</span><span class="si">}</span><span class="s2">.json"</span>
+
+    <span class="k">if</span> <span class="n">cache_results</span> <span class="ow">and</span> <span class="n">cache_file</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">refresh</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">cache_file</span><span class="p">))</span>
 
     <span class="n">url</span> <span class="o">=</span> <span class="n">pypi_user_furl</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">)</span>
     <span class="n">page_contents</span> <span class="o">=</span> <span class="n">get_url_contents_with_selenium</span><span class="p">(</span>
         <span class="n">url</span><span class="p">,</span> <span class="n">wait_seconds</span><span class="o">=</span><span class="mi">5</span>
     <span class="p">)</span>  <span class="c1"># see note below</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">page_contents</span><span class="p">,</span> <span class="n">features</span><span class="o">=</span><span class="s2">&quot;lxml&quot;</span><span class="p">)</span>
-    <span class="n">proj_infos</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;package-snippet&quot;</span><span class="p">})</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">page_contents</span><span class="p">,</span> <span class="n">features</span><span class="o">=</span><span class="s2">"lxml"</span><span class="p">)</span>
+    <span class="n">proj_infos</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s2">"a"</span><span class="p">,</span> <span class="p">{</span><span class="s2">"class"</span><span class="p">:</span> <span class="s2">"package-snippet"</span><span class="p">})</span>
     <span class="k">if</span> <span class="n">validate_project_infos</span><span class="p">:</span>
         <span class="n">_validate_user_projects_infos</span><span class="p">(</span><span class="n">proj_infos</span><span class="p">)</span>
-    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">extractor</span><span class="p">,</span> <span class="n">proj_infos</span><span class="p">))</span></div>
+    <span class="n">projects_info</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">extractor</span><span class="p">,</span> <span class="n">proj_infos</span><span class="p">))</span>
 
+    <span class="k">if</span> <span class="n">cache_results</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">projects_info</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">cache_file</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">projects_info</span></div>
+
+
+
+<span class="n">slurp_user_projects_info</span><span class="o">.</span><span class="n">user_projects_info_cache_folder</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">_user_projects_info_cache_folder</span>
+<span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_validate_user_projects_infos</span><span class="p">(</span><span class="n">proj_infos</span><span class="p">):</span>
-    <span class="n">_t</span> <span class="o">=</span> <span class="n">_get_text_or_none</span><span class="p">(</span><span class="n">nums_re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;h2&quot;</span><span class="p">)))</span>
+    <span class="n">_t</span> <span class="o">=</span> <span class="n">_get_text_or_none</span><span class="p">(</span><span class="n">nums_re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"h2"</span><span class="p">)))</span>
     <span class="k">if</span> <span class="n">_t</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">expected_n_projects</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">_t</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="nb">len</span><span class="p">(</span><span class="n">proj_infos</span><span class="p">)</span> <span class="o">==</span> <span class="n">expected_n_projects</span>
-        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;I expected </span><span class="si">{</span><span class="n">expected_n_projects</span><span class="si">}</span><span class="s2"> projects but found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">proj_infos</span><span class="p">)</span><span class="si">}</span><span class="s2"> listed&quot;</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">"I expected </span><span class="si">{</span><span class="n">expected_n_projects</span><span class="si">}</span><span class="s2"> projects but found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">proj_infos</span><span class="p">)</span><span class="si">}</span><span class="s2"> listed"</span>
 
 
 <div class="viewcode-block" id="get_updated_pkg_name_stub">
 <a class="viewcode-back" href="../../module_docs/yp/base.html#yp.base.get_updated_pkg_name_stub">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_updated_pkg_name_stub</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Get ``{pkg_name: pkg_stub}`` data from pypi</span>
 <span class="sd">    :return: ``{pkg_name: pkg_stub, ...}`` dict</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">r</span> <span class="o">=</span> <span class="n">request_saving_failure_responses</span><span class="p">(</span><span class="s2">&quot;get&quot;</span><span class="p">,</span> <span class="n">pkg_list_url</span><span class="p">)</span>
-    <span class="n">t</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(),</span> <span class="n">features</span><span class="o">=</span><span class="s2">&quot;lxml&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">request_saving_failure_responses</span><span class="p">(</span><span class="s2">"get"</span><span class="p">,</span> <span class="n">pkg_list_url</span><span class="p">)</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(),</span> <span class="n">features</span><span class="o">=</span><span class="s2">"lxml"</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">{</span>
-        <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">contents</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="n">pkg_name_re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;href&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">gen_find</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">contents</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="n">pkg_name_re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"href"</span><span class="p">))</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">gen_find</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="s2">"a"</span><span class="p">)</span>
     <span class="p">}</span></div>
 
 
 
 <div class="viewcode-block" id="refresh_saved_pkg_name_stub">
 <a class="viewcode-back" href="../../module_docs/yp/base.html#yp.base.refresh_saved_pkg_name_stub">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">refresh_saved_pkg_name_stub</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">refresh_saved_pkg_name_stub</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">save_to</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">write_text_file</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Update the ``{pkg_name: pkg_stub}`` stored data with a fresh call to</span>
-<span class="sd">    ``get_updated_pkg_name_stub``</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">global</span> <span class="n">pkg_name_stub</span>
+<span class="sd">    ``get_updated_pkg_name_stub``.</span>
 
-    <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="n">n</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">pkg_names_filepath</span><span class="p">)</span>
-            <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">pkg_names_filepath</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)))</span>
-        <span class="p">)</span> <span class="ow">or</span> <span class="mi">0</span>
-    <span class="n">pkg_name_stub</span> <span class="o">=</span> <span class="n">get_updated_pkg_name_stub</span><span class="p">()</span>
-    <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">pkg_name_stub</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">pkg_names_filepath</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">))</span>
-    <span class="n">Path</span><span class="p">(</span><span class="n">pkg_names_text_filepath</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pkg_name_stub</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+<span class="sd">    The refreshed copy is written to the user's app folder by default, not into the</span>
+<span class="sd">    installed package, which is read-only in many installs.</span>
+
+<span class="sd">    :param save_to: Where to write the gzipped TSV cache.</span>
+<span class="sd">        Defaults to ``pkg_names_user_filepath``.</span>
+<span class="sd">    :param write_text_file: Also write a plain ``pkg_list.txt`` of the names, one per</span>
+<span class="sd">        line, alongside ``save_to``.</span>
+<span class="sd">    """</span>
+    <span class="n">save_to</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">save_to</span><span class="p">)</span> <span class="k">if</span> <span class="n">save_to</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">pkg_names_user_filepath</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pkg_name_stub</span><span class="p">)</span> <span class="k">if</span> <span class="n">pkg_name_stub</span><span class="o">.</span><span class="n">is_loaded</span> <span class="k">else</span> <span class="mi">0</span>
+
+    <span class="n">fresh</span> <span class="o">=</span> <span class="n">get_updated_pkg_name_stub</span><span class="p">()</span>
+    <span class="n">save_to</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">save_to</span><span class="o">.</span><span class="n">write_bytes</span><span class="p">(</span><span class="n">_encode_pkg_name_stub</span><span class="p">(</span><span class="n">fresh</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">write_text_file</span><span class="p">:</span>
+        <span class="p">(</span><span class="n">save_to</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">"pkg_list.txt"</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fresh</span><span class="p">))</span>
+    <span class="n">pkg_name_stub</span><span class="o">.</span><span class="n">update_cache</span><span class="p">(</span><span class="n">fresh</span><span class="p">)</span>
+
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Updated the pkg_name_stub. Had </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> items; now has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">pkg_name_stub</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot; The dict is saved here: </span><span class="si">{</span><span class="n">pkg_names_filepath</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">"Updated the pkg_name_stub. Had </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> items; now has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">fresh</span><span class="p">)</span><span class="si">}</span><span class="s2">."</span>
+            <span class="sa">f</span><span class="s2">" The data is saved here: </span><span class="si">{</span><span class="n">save_to</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span></div>
 
 
@@ -378,14 +549,30 @@
 <div class="viewcode-block" id="info_of_pkg_from_web">
 <a class="viewcode-back" href="../../module_docs/yp/base.html#yp.base.info_of_pkg_from_web">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">info_of_pkg_from_web</span><span class="p">(</span><span class="n">pkg_name</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Get dict of information for a pkg_name</span>
 <span class="sd">    :param pkg_name:</span>
 <span class="sd">    :return:</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">r</span> <span class="o">=</span> <span class="n">request_saving_failure_responses</span><span class="p">(</span><span class="s2">&quot;get&quot;</span><span class="p">,</span> <span class="n">pkg_info_furl</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pkg_name</span><span class="o">=</span><span class="n">pkg_name</span><span class="p">))</span>
+<span class="sd">    """</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">request_saving_failure_responses</span><span class="p">(</span><span class="s2">"get"</span><span class="p">,</span> <span class="n">pkg_info_furl</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pkg_name</span><span class="o">=</span><span class="n">pkg_name</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">()</span></div>
 
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_pkg_exists_on_pypi</span><span class="p">(</span><span class="n">pkg_name</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">pkg_existence_check_timeout</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return True iff ``pkg_name`` exists on PyPI, using the authoritative</span>
+<span class="sd">    JSON API as the signal (200 =&gt; exists/taken, 404 =&gt; free).</span>
+
+<span class="sd">    A lightweight ``HEAD`` request is used (no payload downloaded). This is more</span>
+<span class="sd">    reliable than scraping the HTML ``/project/&lt;name&gt;`` page, which can return a</span>
+<span class="sd">    soft 200 for non-existent names in some network environments. PyPI</span>
+<span class="sd">    normalizes names per PEP 503, so separator/case variants of a taken name</span>
+<span class="sd">    (e.g. ``scikit_learn`` for ``scikit-learn``) also report ``True``.</span>
+<span class="sd">    """</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span>
+        <span class="n">pkg_info_furl</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pkg_name</span><span class="o">=</span><span class="n">pkg_name</span><span class="p">),</span> <span class="n">allow_redirects</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>
 
 
 <span class="c1"># Utils #################################################################################</span>
@@ -397,22 +584,22 @@
     <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">r</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Request came back with status_code: </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Request came back with status_code: </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">"</span>
         <span class="n">tmp_filepath</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mktemp</span><span class="p">()</span>
-        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_filepath</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">))</span>
-        <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="se">\n</span><span class="s2">The response object was pickled in </span><span class="si">{</span><span class="n">tmp_filepath</span><span class="si">}</span><span class="s2">.</span>
+        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_filepath</span><span class="p">,</span> <span class="s2">"wb"</span><span class="p">))</span>
+        <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"""</span><span class="se">\n</span><span class="s2">The response object was pickled in </span><span class="si">{</span><span class="n">tmp_filepath</span><span class="si">}</span><span class="s2">.</span>
 <span class="s2">        To get it do:</span>
 <span class="s2">        import pickle</span>
-<span class="s2">        r = pickle.load(open(&#39;</span><span class="si">{</span><span class="n">tmp_filepath</span><span class="si">}</span><span class="s2">&#39;, &#39;rb&#39;))</span>
-<span class="s2">        &quot;&quot;&quot;</span>
+<span class="s2">        r = pickle.load(open('</span><span class="si">{</span><span class="n">tmp_filepath</span><span class="si">}</span><span class="s2">', 'rb'))</span>
+<span class="s2">        """</span>
         <span class="k">raise</span> <span class="n">RequestException</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="return_sentinel_on_exception">
 <a class="viewcode-back" href="../../module_docs/yp/base.html#yp.base.return_sentinel_on_exception">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">return_sentinel_on_exception</span><span class="p">(</span><span class="n">caught_exceptions</span><span class="o">=</span><span class="p">(</span><span class="ne">Exception</span><span class="p">,),</span> <span class="n">sentinel</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decorates a function so it will return a sentinel (default None) instead of</span>
-<span class="sd">    raising an exception&quot;&quot;&quot;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">return_sentinel_on_exception</span><span class="p">(</span><span class="n">caught_exceptions</span><span class="o">=</span><span class="p">(</span><span class="ne">Exception</span><span class="p">,),</span> <span class="nb">sentinel</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Decorates a function so it will return a sentinel (default None) instead of</span>
+<span class="sd">    raising an exception"""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
         <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
@@ -420,7 +607,7 @@
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="k">except</span> <span class="n">caught_exceptions</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">sentinel</span>
+                <span class="k">return</span> <span class="nb">sentinel</span>
             <span class="k">return</span> <span class="n">wrapped</span>
 
     <span class="k">return</span> <span class="n">decorator</span></div>
@@ -429,13 +616,13 @@
 
 <span class="nd">@wraps</span><span class="p">(</span>
     <span class="n">BeautifulSoup</span><span class="o">.</span><span class="n">find_all</span><span class="p">,</span>
-    <span class="n">assigned</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;__module__&quot;</span><span class="p">,</span> <span class="s2">&quot;__qualname__&quot;</span><span class="p">,</span> <span class="s2">&quot;__annotations__&quot;</span><span class="p">,</span> <span class="s2">&quot;__name__&quot;</span><span class="p">),</span>
+    <span class="n">assigned</span><span class="o">=</span><span class="p">(</span><span class="s2">"__module__"</span><span class="p">,</span> <span class="s2">"__qualname__"</span><span class="p">,</span> <span class="s2">"__annotations__"</span><span class="p">,</span> <span class="s2">"__name__"</span><span class="p">),</span>
 <span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">gen_find</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Does what BeautifulSoup.find_all does, but as an iterator.</span>
-<span class="sd">    See find_all documentation for more information.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Does what BeautifulSoup.find_all does, but as an iterator.</span>
+<span class="sd">    See find_all documentation for more information."""</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="n">tag</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">features</span><span class="o">=</span><span class="s2">&quot;lxml&quot;</span><span class="p">)</span>
+        <span class="n">tag</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">features</span><span class="o">=</span><span class="s2">"lxml"</span><span class="p">)</span>
     <span class="n">next_tag</span> <span class="o">=</span> <span class="n">tag</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">while</span> <span class="n">next_tag</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">yield</span> <span class="n">next_tag</span>
@@ -449,7 +636,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright NO COPYRIGHT.</p>
+    <p></p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

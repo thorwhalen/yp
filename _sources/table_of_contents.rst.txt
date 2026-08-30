@@ -5,5 +5,7 @@
    module_docs/yp
    module_docs/yp/base
    module_docs/yp/deps
+   module_docs/yp/tests
+   module_docs/yp/tests/test_pkg_name_stub
    module_docs/yp/tools
    module_docs/yp/util

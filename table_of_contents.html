@@ -6,18 +6,18 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>&lt;no title&gt; &mdash; yp 0.0.10 documentation</title>
+  <title>&lt;no title&gt; &mdash; yp 0.0.11 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=a83ce22a"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/documentation_options.js?v=0c446633"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/toggleprompt.js?v=d7ede5d2"></script>
       <script src="_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="_static/copybutton.js?v=f281be69"></script>
@@ -50,6 +50,8 @@
 <li class="toctree-l1"><a class="reference internal" href="module_docs/yp.html">yp</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/yp/base.html">yp.base</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/yp/deps.html">yp.deps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/yp/tests.html">yp.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/yp/tests/test_pkg_name_stub.html">yp.tests.test_pkg_name_stub</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/yp/tools.html">yp.tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/yp/util.html">yp.util</a></li>
 </ul>
@@ -83,9 +85,16 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/yp.html">yp</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/yp/base.html">yp.base</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/yp/base.html#yp.base.CachedPkgNameStub"><code class="docutils literal notranslate"><span class="pre">CachedPkgNameStub</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/yp/base.html#yp.base.MissingPackageNamesError"><code class="docutils literal notranslate"><span class="pre">MissingPackageNamesError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/yp/base.html#yp.base.PKG_LIST_FILENAME"><code class="docutils literal notranslate"><span class="pre">PKG_LIST_FILENAME</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/yp/base.html#yp.base.Pypi"><code class="docutils literal notranslate"><span class="pre">Pypi</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/yp/base.html#yp.base.get_updated_pkg_name_stub"><code class="docutils literal notranslate"><span class="pre">get_updated_pkg_name_stub()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/yp/base.html#yp.base.info_of_pkg_from_web"><code class="docutils literal notranslate"><span class="pre">info_of_pkg_from_web()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/yp/base.html#yp.base.pkg_name_stub"><code class="docutils literal notranslate"><span class="pre">pkg_name_stub</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/yp/base.html#yp.base.pkg_names_legacy_pickle_filepath"><code class="docutils literal notranslate"><span class="pre">pkg_names_legacy_pickle_filepath</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/yp/base.html#yp.base.pkg_names_package_filepath"><code class="docutils literal notranslate"><span class="pre">pkg_names_package_filepath</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/yp/base.html#yp.base.pkg_names_user_filepath"><code class="docutils literal notranslate"><span class="pre">pkg_names_user_filepath</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/yp/base.html#yp.base.refresh_saved_pkg_name_stub"><code class="docutils literal notranslate"><span class="pre">refresh_saved_pkg_name_stub()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/yp/base.html#yp.base.return_sentinel_on_exception"><code class="docutils literal notranslate"><span class="pre">return_sentinel_on_exception()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/yp/base.html#yp.base.slurp_user_projects_info"><code class="docutils literal notranslate"><span class="pre">slurp_user_projects_info()</span></code></a></li>
@@ -98,8 +107,11 @@
 <li class="toctree-l2"><a class="reference internal" href="module_docs/yp/deps.html#yp.deps.parse_pipdeptree"><code class="docutils literal notranslate"><span class="pre">parse_pipdeptree()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/yp/tests.html">yp.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/yp/tests/test_pkg_name_stub.html">yp.tests.test_pkg_name_stub</a></li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/yp/tools.html">yp.tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="module_docs/yp/tools.html#yp.tools.latest_release_upload_datetime"><code class="docutils literal notranslate"><span class="pre">latest_release_upload_datetime()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/yp/tools.html#yp.tools.recent_versions"><code class="docutils literal notranslate"><span class="pre">recent_versions()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="module_docs/yp/util.html">yp.util</a></li>
@@ -114,7 +126,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright NO COPYRIGHT.</p>
+    <p></p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

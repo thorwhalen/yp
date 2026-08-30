@@ -1,0 +1,4 @@
+yp.tests.test_pkg_name_stub
+===========================
+.. automodule:: yp.tests.test_pkg_name_stub
+   :members:

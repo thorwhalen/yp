@@ -6,18 +6,18 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>yp.tools &mdash; yp 0.0.10 documentation</title>
+  <title>yp.tools &mdash; yp 0.0.11 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=a83ce22a"></script>
-      <script src="../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=0c446633"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../_static/copybutton.js?v=f281be69"></script>
@@ -25,7 +25,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="yp.util" href="util.html" />
-    <link rel="prev" title="yp.deps" href="deps.html" /> 
+    <link rel="prev" title="yp.tests.test_pkg_name_stub" href="tests/test_pkg_name_stub.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -52,8 +52,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../yp.html">yp</a></li>
 <li class="toctree-l1"><a class="reference internal" href="base.html">yp.base</a></li>
 <li class="toctree-l1"><a class="reference internal" href="deps.html">yp.deps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests.html">yp.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests/test_pkg_name_stub.html">yp.tests.test_pkg_name_stub</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">yp.tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#yp.tools.latest_release_upload_datetime"><code class="docutils literal notranslate"><span class="pre">latest_release_upload_datetime()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#yp.tools.recent_versions"><code class="docutils literal notranslate"><span class="pre">recent_versions()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="util.html">yp.util</a></li>
@@ -101,20 +104,30 @@ or None if the input is empty or malformed.</p>
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="yp.tools.recent_versions">
+<span class="sig-prename descclassname"><span class="pre">yp.tools.</span></span><span class="sig-name descname"><span class="pre">recent_versions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">package_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">egress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/yp/tools.html#recent_versions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#yp.tools.recent_versions" title="Link to this definition"></a></dt>
+<dd><p>Get the most recent version for each package.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">recent_versions</span><span class="p">([</span><span class="s1">'numpy'</span><span class="p">,</span> <span class="s1">'pandas'</span><span class="p">,</span> <span class="s1">'dol'</span><span class="p">])</span>
+<span class="go">{'numpy': '1.26.4', 'pandas': '2.1.4', 'dol': '0.2.51'}</span>
+</pre></div>
+</div>
+</dd></dl>
+
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="deps.html" class="btn btn-neutral float-left" title="yp.deps" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tests/test_pkg_name_stub.html" class="btn btn-neutral float-left" title="yp.tests.test_pkg_name_stub" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="util.html" class="btn btn-neutral float-right" title="yp.util" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright NO COPYRIGHT.</p>
+    <p></p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

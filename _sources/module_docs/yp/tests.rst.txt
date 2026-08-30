@@ -1,0 +1,4 @@
+yp.tests
+========
+.. automodule:: yp.tests
+   :members:
