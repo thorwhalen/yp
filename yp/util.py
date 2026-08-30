@@ -1,4 +1,4 @@
-"""Utils for yb"""
+"""Utils for yp"""
 
 from collections import ChainMap
 import os
@@ -8,7 +8,7 @@ from pathlib import Path
 proj_rootdir = os.path.dirname(__file__)
 DFLT_ROOTDIR = proj_rootdir
 ROOTDIR_ENV_VAR = "YP_ROOTDIR"
-app_rootdir = get_app_config_folder('yp')
+app_rootdir = get_app_config_folder("yp")
 app_path = Path(app_rootdir)
 
 resources = ChainMap(os.environ)

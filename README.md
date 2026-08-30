@@ -59,9 +59,17 @@ you want to work with in all kinds of ways!
 
 # Extras
 
-The `yp.refresh_saved_pkg_name_stub()` will go fetch the current list of pypi names and save them locally (in the package's data folder). 
+`yp` ships a cached list of every PyPI project name (`yp/data/pkg_list.tsv.gz`), so
+name lookups are instant and offline. The cache is loaded lazily -- the first lookup
+pays for it, `import yp` does not.
 
-I do this from time to time and push the results. You can find a list (as a text file with one name per line) here:
+`yp.refresh_saved_pkg_name_stub()` fetches the current list and saves it to your app
+folder, which then takes precedence over the copy shipped with the package. (It writes
+there rather than into the installed package, which is read-only in many installs.)
+Pass `save_to=` to write elsewhere.
+
+I also refresh the shipped copy from time to time and push the results. You can find
+the list (as a text file with one name per line) here:
 https://raw.githubusercontent.com/thorwhalen/yp/refs/heads/master/yp/data/pkg_list.txt
 
 

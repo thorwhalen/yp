@@ -19,7 +19,7 @@ def recent_versions(package_names: Iterable[str], egress: Optional[Callable] = N
     for pkg_name in package_names:
         try:
             info = pypi[pkg_name]
-            versions[pkg_name] = info['info']['version']
+            versions[pkg_name] = info["info"]["version"]
         except Exception:
             versions[pkg_name] = None
 

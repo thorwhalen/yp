@@ -1,0 +1,5 @@
+# Keep in sync with [options.package_data] in setup.cfg
+include yp/data/pkg_list.tsv.gz
+recursive-include yp/data/skills *.md
+exclude yp/data/pkg_list.txt
+exclude yp/data/pkg_list.p

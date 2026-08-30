@@ -1,13 +1,12 @@
-"""Base functionality of yb"""
+"""Base functionality of yp"""
 
-import os
+import gzip
 from functools import wraps
 import tempfile
 import pickle
 from pathlib import Path
 import re
-
-from streamlit import json
+from collections.abc import Mapping
 
 import requests
 from requests.exceptions import RequestException
@@ -20,7 +19,20 @@ pkg_list_url = "https://pypi.org/simple"
 pkg_info_furl = "https://pypi.python.org/pypi/{pkg_name}/json"
 pypi_user_furl = "https://pypi.org/user/{user}/"
 pkg_existence_check_timeout = 10  # seconds, for live JSON-API availability checks
-pkg_names_filepath = dpath("pkg_list.p")
+#: Canonical cache file: gzipped TSV of ``pkg_name<TAB>pkg_stub`` lines, where the
+#: tab and stub are omitted for the ~96% of projects whose stub equals their name.
+#: That keeps the copy shipped in the distribution at ~4MB, against ~27MB for the
+#: equivalent pickle, and avoids unpickling data at import time.
+PKG_LIST_FILENAME = "pkg_list.tsv.gz"
+
+#: Seed copy shipped inside the installed distribution (read-only in most installs).
+pkg_names_package_filepath = Path(dpath(PKG_LIST_FILENAME))
+#: Where ``refresh_saved_pkg_name_stub`` writes; takes precedence when it exists.
+pkg_names_user_filepath = app_path / PKG_LIST_FILENAME
+#: Pre-0.0.12 pickle cache, still read when no gzipped TSV is found.
+pkg_names_legacy_pickle_filepath = Path(dpath("pkg_list.p"))
+
+pkg_names_filepath = pkg_names_package_filepath  # backwards-compatible alias
 pkg_names_text_filepath = dpath("pkg_list.txt")
 pkg_name_re = re.compile(r"/simple/([^/]+)/")
 nums_re = re.compile(r"\d+")
@@ -29,14 +41,119 @@ user_projects_info_path = app_path / "user_projects_info"
 # ensure directory exists
 user_projects_info_path.mkdir(parents=True, exist_ok=True)
 
-try:
-    pkg_name_stub = pickle.load(open(pkg_names_filepath, "rb"))
-except:
-    import warnings
 
-    warnings.warn(
-        f"Couldn't unpickle {pkg_names_filepath}. Some functionality might not work"
+class MissingPackageNamesError(FileNotFoundError):
+    """Raised when yp's cached list of PyPI project names cannot be found or read.
+
+    Previously this condition was swallowed, which left ``pkg_name_stub`` undefined
+    and surfaced downstream as a bare ``ImportError: cannot import name
+    'pkg_name_stub'`` -- with no hint as to the real cause.
+    """
+
+
+def _encode_pkg_name_stub(pkg_name_stub):
+    """Encode a ``{pkg_name: pkg_stub}`` mapping as gzipped TSV bytes."""
+    lines = (
+        name if name == stub else f"{name}\t{stub}"
+        for name, stub in pkg_name_stub.items()
     )
+    # mtime=0 keeps the output byte-for-byte reproducible across builds
+    return gzip.compress("\n".join(lines).encode("utf-8"), 6, mtime=0)
+
+
+def _decode_pkg_name_stub(data: bytes):
+    """Inverse of ``_encode_pkg_name_stub``."""
+    pkg_name_stub = {}
+    for line in gzip.decompress(data).decode("utf-8").split("\n"):
+        if line:
+            name, _, stub = line.partition("\t")
+            pkg_name_stub[name] = stub or name
+    return pkg_name_stub
+
+
+def _read_pkg_name_stub():
+    """Read the cached ``{pkg_name: pkg_stub}`` mapping, freshest source first.
+
+    Raises ``MissingPackageNamesError``, with instructions, if no cache is readable.
+    """
+    for filepath in (pkg_names_user_filepath, pkg_names_package_filepath):
+        if filepath.is_file():
+            return _decode_pkg_name_stub(filepath.read_bytes())
+    if pkg_names_legacy_pickle_filepath.is_file():  # pre-0.0.12 cache
+        with open(pkg_names_legacy_pickle_filepath, "rb") as f:
+            return pickle.load(f)
+    raise MissingPackageNamesError(
+        "yp could not find its cached list of PyPI project names.\n"
+        "Looked for:\n"
+        f"  {pkg_names_user_filepath}\n"
+        f"  {pkg_names_package_filepath}\n"
+        f"  {pkg_names_legacy_pickle_filepath} (legacy)\n"
+        "This usually means yp was installed from a distribution built without its "
+        "data files. To download and cache the list yourself (a few MB from "
+        f"{pkg_list_url}), run:\n"
+        "    python -c 'import yp; yp.refresh_saved_pkg_name_stub()'"
+    )
+
+
+class CachedPkgNameStub(Mapping):
+    """The ``{pkg_name: pkg_stub}`` mapping of every project on PyPI, loaded lazily.
+
+    Reading the cache is deferred to first use, so ``import yp`` stays cheap and,
+    more importantly, never fails because of a missing data file: a missing cache
+    raises ``MissingPackageNamesError`` -- with an actionable message -- only if and
+    when the names are actually needed.
+
+    >>> stub = CachedPkgNameStub()
+    >>> 'numpy' in stub
+    True
+    >>> stub['scikit-learn']
+    'scikit-learn'
+    >>> len(stub) > 100_000
+    True
+    """
+
+    def __init__(self, mapping=None):
+        self._mapping = mapping
+
+    @property
+    def mapping(self):
+        """The underlying ``dict``, read from cache on first access."""
+        if self._mapping is None:
+            self._mapping = _read_pkg_name_stub()
+        return self._mapping
+
+    def update_cache(self, mapping):
+        """Replace the in-memory contents, keeping this object's identity.
+
+        Rebinding the module global instead would leave every ``from yp import
+        pkg_name_stub`` pointing at the stale mapping.
+        """
+        self._mapping = mapping
+
+    @property
+    def is_loaded(self):
+        """Whether the cache has been read yet."""
+        return self._mapping is not None
+
+    def __getitem__(self, k):
+        return self.mapping[k]
+
+    def __iter__(self):
+        return iter(self.mapping)
+
+    def __len__(self):
+        return len(self.mapping)
+
+    def __contains__(self, k):
+        return k in self.mapping
+
+    def __repr__(self):
+        state = f"{len(self._mapping)} names" if self.is_loaded else "not loaded yet"
+        return f"{type(self).__name__}(<{state}>)"
+
+
+#: Mapping of every PyPI project name to its normalized stub. Loaded on first use.
+pkg_name_stub = CachedPkgNameStub()
 
 
 def asis(x):
@@ -62,8 +179,8 @@ class Pypi(KvReader):
     nested dict of good stuff.
 
     >>> info = p['numpy']
-    >>> list(info)
-    ['info', 'last_serial', 'releases', 'urls', 'vulnerabilities']
+    >>> {'info', 'last_serial', 'releases', 'urls'}.issubset(info)
+    True
 
     Tip: To only get the info you want, you'll
 
@@ -287,26 +404,33 @@ def get_updated_pkg_name_stub():
     }
 
 
-def refresh_saved_pkg_name_stub(verbose=True):
+def refresh_saved_pkg_name_stub(verbose=True, *, save_to=None, write_text_file=True):
     """
     Update the ``{pkg_name: pkg_stub}`` stored data with a fresh call to
-    ``get_updated_pkg_name_stub``
-    """
-    global pkg_name_stub
+    ``get_updated_pkg_name_stub``.
 
-    n = 0
-    if verbose:
-        n = (
-            os.path.isfile(pkg_names_filepath)
-            and len(pickle.load(open(pkg_names_filepath, "rb")))
-        ) or 0
-    pkg_name_stub = get_updated_pkg_name_stub()
-    pickle.dump(pkg_name_stub, open(pkg_names_filepath, "wb"))
-    Path(pkg_names_text_filepath).write_text("\n".join(pkg_name_stub.keys()))
+    The refreshed copy is written to the user's app folder by default, not into the
+    installed package, which is read-only in many installs.
+
+    :param save_to: Where to write the gzipped TSV cache.
+        Defaults to ``pkg_names_user_filepath``.
+    :param write_text_file: Also write a plain ``pkg_list.txt`` of the names, one per
+        line, alongside ``save_to``.
+    """
+    save_to = Path(save_to) if save_to is not None else pkg_names_user_filepath
+    n = len(pkg_name_stub) if pkg_name_stub.is_loaded else 0
+
+    fresh = get_updated_pkg_name_stub()
+    save_to.parent.mkdir(parents=True, exist_ok=True)
+    save_to.write_bytes(_encode_pkg_name_stub(fresh))
+    if write_text_file:
+        (save_to.parent / "pkg_list.txt").write_text("\n".join(fresh))
+    pkg_name_stub.update_cache(fresh)
+
     if verbose:
         print(
-            f"Updated the pkg_name_stub. Had {n} items; now has {len(pkg_name_stub)}."
-            f" The dict is saved here: {pkg_names_filepath}"
+            f"Updated the pkg_name_stub. Had {n} items; now has {len(fresh)}."
+            f" The data is saved here: {save_to}"
         )
 
 
