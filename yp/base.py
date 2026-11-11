@@ -1,6 +1,9 @@
 """Base functionality of yp"""
 
 import gzip
+import json
+import warnings
+import xmlrpc.client
 from functools import wraps
 import tempfile
 import pickle
@@ -17,7 +20,9 @@ from yp.util import dpath, app_path
 
 pkg_list_url = "https://pypi.org/simple"
 pkg_info_furl = "https://pypi.python.org/pypi/{pkg_name}/json"
-pypi_user_furl = "https://pypi.org/user/{user}/"
+pypi_xmlrpc_url = "https://pypi.org/pypi"
+pypi_project_furl = "https://pypi.org/project/{name}/"
+user_packages_timeout = 30  # seconds, for the user-listing and per-project requests
 pkg_existence_check_timeout = 10  # seconds, for live JSON-API availability checks
 #: Canonical cache file: gzipped TSV of ``pkg_name<TAB>pkg_stub`` lines, where the
 #: tab and stub are omitted for the ~96% of projects whose stub equals their name.
@@ -35,7 +40,6 @@ pkg_names_legacy_pickle_filepath = Path(dpath("pkg_list.p"))
 pkg_names_filepath = pkg_names_package_filepath  # backwards-compatible alias
 pkg_names_text_filepath = dpath("pkg_list.txt")
 pkg_name_re = re.compile(r"/simple/([^/]+)/")
-nums_re = re.compile(r"\d+")
 
 user_projects_info_path = app_path / "user_projects_info"
 # ensure directory exists
@@ -303,92 +307,137 @@ class Pypi(KvReader):
         return not _pkg_exists_on_pypi(pkg_name)
 
 
-def _get_text_or_none(tag):
-    return tag.text if tag else None
+def xmlrpc_user_packages(user: str, *, timeout: float = user_packages_timeout):
+    """``[(role, name), ...]`` for the projects ``user`` owns or maintains on PyPI.
 
+    Calls PyPI's XML-RPC ``user_packages`` method, the only official way to list an
+    account's projects (deprecated by PyPI but still answered). The HTML user page
+    (``https://pypi.org/user/{user}/``) answers scripts with a JavaScript challenge,
+    so it cannot be used.
 
-def _extract_project_info_from_user_page(node):
-    return dict(
-        name=_get_text_or_none(node.find("h3")),
-        description=_get_text_or_none(
-            node.find("p", {"class": "package-snippet__description"})
-        ),
-        date=node.find("time").get("datetime"),
-        href=node.get("href"),
+    >>> xmlrpc_user_packages('thorwhalen1')[:2]  # doctest: +SKIP
+    [['Owner', 'accompy'], ['Owner', 'aix']]
+    """
+    body = xmlrpc.client.dumps((user,), "user_packages")
+    r = requests.post(
+        pypi_xmlrpc_url,
+        data=body.encode("utf-8"),
+        headers={"Content-Type": "text/xml"},
+        timeout=timeout,
     )
+    r.raise_for_status()
+    (pairs,), _ = xmlrpc.client.loads(r.content)
+    return pairs
 
 
-def get_url_contents_with_selenium(url: str, wait_seconds: int = 5) -> str:
-    import time
-    from selenium import webdriver  # pip install selenium
-    from selenium.webdriver.chrome.service import Service
-    from webdriver_manager.chrome import (
-        ChromeDriverManager,
-    )  # pip install webdriver-manager
-
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
-    driver.get(url)
-    time.sleep(wait_seconds)  # Wait for the page to load
-    page_source = driver.page_source  # Full rendered HTML
-    driver.quit()  # Close the browser
-    return page_source
+def pypi_project_json(name: str, *, timeout: float = user_packages_timeout) -> dict:
+    """The JSON API document of PyPI project ``name``."""
+    r = requests.get(pkg_info_furl.format(pkg_name=name), timeout=timeout)
+    r.raise_for_status()
+    return r.json()
 
 
-_user_projects_info_cache_folder = app_path / "user_projects_info"
+def _project_details(project_json: dict) -> dict:
+    """``description``, ``version`` and ``date`` (of the last release) of a project."""
+    info = project_json.get("info") or {}
+    upload_times = [
+        f.get("upload_time_iso_8601") or f.get("upload_time") or ""
+        for f in project_json.get("urls") or []
+    ]
+    return {
+        "description": info.get("summary") or None,
+        "version": info.get("version") or None,
+        "date": max(upload_times, default="") or None,
+    }
+
+
+def _add_details(projects_info, *, project_json, max_workers):
+    """Add the ``_project_details`` keys to each record, fetching concurrently.
+
+    A project whose JSON cannot be fetched keeps ``None`` details (with a warning),
+    rather than failing the whole listing.
+    """
+    from concurrent.futures import ThreadPoolExecutor
+
+    def details(name):
+        try:
+            return _project_details(project_json(name))
+        except RequestException as e:
+            failed.append(f"{name} ({e})")
+            return dict.fromkeys(("description", "version", "date"))
+
+    failed = []
+    with ThreadPoolExecutor(max_workers=max_workers) as pool:
+        all_details = pool.map(details, [d["name"] for d in projects_info])
+        projects_info = [{**d, **x} for d, x in zip(projects_info, all_details)]
+    if failed:
+        warnings.warn(
+            f"Could not fetch details for {len(failed)} project(s): "
+            + ", ".join(failed[:5])
+            + (" ..." if len(failed) > 5 else "")
+        )
+    return projects_info
 
 
 def slurp_user_projects_info(
     user,
     *,
-    extractor=_extract_project_info_from_user_page,
-    validate_project_infos=False,
+    with_details=False,
     cache_results=True,
     refresh=False,
+    user_packages=xmlrpc_user_packages,
+    project_json=pypi_project_json,
+    max_workers=8,
 ):
     """
-    Fetches the list of projects for that user.
-    To do so it fetches the html of the user projects page and parses out
-    ``name``, ``href`` and ``date`` (of the last release), which can be useful in
-    its own, to not have to get it from repeated project info requests.
+    The list of projects that ``user`` owns or maintains on PyPI.
 
-    If `cache_results` is True (the default), results will be cached.
-    If `refresh` is True, the cache will be refreshed.
+    Each record has ``name``, ``href`` (the project's PyPI page) and ``role``
+    (``'owner'`` or ``'maintainer'``). With ``with_details=True`` it also has
+    ``description`` (the summary), ``version`` and ``date`` (upload time of the
+    last release), fetched concurrently from the JSON API: one request per project,
+    so expect some seconds for an account with hundreds of projects.
+
+    If ``cache_results`` is True (the default), results are cached on disk, in
+    ``slurp_user_projects_info.user_projects_info_cache_folder``.
+    If ``refresh`` is True, the cache is refreshed.
+    A cache written without details is refetched when details are asked for.
+
+    ``user_packages`` (``user -> [(role, name), ...]``) and ``project_json``
+    (``name -> dict``) are the transports; the defaults call PyPI.
+
+    >>> infos = slurp_user_projects_info('thorwhalen1')  # doctest: +SKIP
+    >>> sorted(infos[0])  # doctest: +SKIP
+    ['href', 'name', 'role']
     """
-    import json
-
-    cache_file = _user_projects_info_cache_folder / f"{user}.json"
+    cache_file = user_projects_info_path / f"{user}.json"
 
     if cache_results and cache_file.exists() and not refresh:
-        return json.load(open(cache_file))
+        cached = json.loads(cache_file.read_text())
+        if not with_details or all("date" in d for d in cached):
+            return cached
 
-    url = pypi_user_furl.format(user=user)
-    page_contents = get_url_contents_with_selenium(
-        url, wait_seconds=5
-    )  # see note below
-    b = BeautifulSoup(page_contents, features="lxml")
-    proj_infos = b.find_all("a", {"class": "package-snippet"})
-    if validate_project_infos:
-        _validate_user_projects_infos(proj_infos)
-    projects_info = list(map(extractor, proj_infos))
+    projects_info = [
+        {
+            "name": name,
+            "href": pypi_project_furl.format(name=name),
+            "role": role.lower(),
+        }
+        for role, name in user_packages(user)
+    ]
+    if with_details:
+        projects_info = _add_details(
+            projects_info, project_json=project_json, max_workers=max_workers
+        )
 
     if cache_results:
-        json.dump(projects_info, open(cache_file, "w"))
+        cache_file.parent.mkdir(parents=True, exist_ok=True)
+        cache_file.write_text(json.dumps(projects_info))
 
     return projects_info
 
 
-slurp_user_projects_info.user_projects_info_cache_folder = (
-    _user_projects_info_cache_folder
-)
-
-
-def _validate_user_projects_infos(proj_infos):
-    _t = _get_text_or_none(nums_re.search(b.find("h2")))
-    if _t is not None:
-        expected_n_projects = int(_t.strip()).group(0)
-        assert (
-            len(proj_infos) == expected_n_projects
-        ), f"I expected {expected_n_projects} projects but found {len(proj_infos)} listed"
+slurp_user_projects_info.user_projects_info_cache_folder = user_projects_info_path
 
 
 def get_updated_pkg_name_stub():
