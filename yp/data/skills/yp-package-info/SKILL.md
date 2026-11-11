@@ -98,13 +98,17 @@ list(up)
 
 from yp import slurp_user_projects_info
 slurp_user_projects_info("thorwhalen1")
-# [{'name':..., 'description':..., 'date':..., 'href':...}, ...]
+# [{'name':..., 'href': 'https://pypi.org/project/<name>/', 'role': 'owner'|'maintainer'}, ...]
+slurp_user_projects_info("thorwhalen1", with_details=True)
+# each record also gets 'description', 'version' and 'date' (last release upload time)
 ```
 
-**Gotcha:** the user page is JavaScript-rendered, so this path uses **Selenium**
-(`selenium` + `webdriver-manager` + a Chrome driver) and is much slower than the
-JSON API. Results are cached under the app config dir; pass `refresh=True` to
-`slurp_user_projects_info` to re-fetch.
+The listing comes from PyPI's XML-RPC `user_packages` (one request; deprecated by
+PyPI but still answered). The HTML user page cannot be used: it answers scripts
+with a JavaScript challenge. `with_details=True` adds one JSON-API request per
+project, made concurrently (a few seconds for ~300 projects). Results are cached
+under the app config dir; pass `refresh=True` to re-fetch. A cache written
+without details is refetched when details are asked for.
 
 ## Bulk-download metadata to a store
 
