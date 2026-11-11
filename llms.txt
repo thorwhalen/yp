@@ -1,0 +1,24 @@
+# yp
+
+> A mapping view to pypi projects
+
+
+## Pages
+
+- [yp](index.html.md): A mapping view to pypi projects
+- [API reference](api.html.md): | &#96;yp&#96;   | A mapping view of pypi   |
+- [yp](_autosummary/yp.html.md): A mapping view of pypi
+- [yp.base](_autosummary/yp.base.html.md): Base functionality of yp
+- [yp.deps](_autosummary/yp.deps.html.md): Tools for getting dependencies info.
+- [yp.tools](_autosummary/yp.tools.html.md): A medley of yp-derived tools for working with pypi
+- [yp.util](_autosummary/yp.util.html.md): Utils for yp
+- [For AI agents](ai-agents.html.md): &#96;yp&#96; ships artifacts for coding agents alongside its code. This page lists
+- [About this build](about-this-build.html.md): This documentation was built on &#42;&#42;2026-11-11 13:41 UTC&#42;&#42; from commit &lt;a href="https://github.com/tho...
+
+## Optional
+
+- [yp.md](yp.md): Complete documentation in a single file.
+
+## Build
+
+- [build_info.json](build_info.json): build provenance (commit, version, tool versions, whether the docs match the package)

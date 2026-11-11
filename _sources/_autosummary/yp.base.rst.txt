@@ -1,0 +1,42 @@
+yp.base
+=======
+
+.. automodule:: yp.base
+
+   
+   .. rubric:: Module Attributes
+
+   .. autosummary::
+   
+      PKG_LIST_FILENAME
+      pkg_names_package_filepath
+      pkg_names_user_filepath
+      pkg_names_legacy_pickle_filepath
+      pkg_name_stub
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      asis
+      get_updated_pkg_name_stub
+      info_of_pkg_from_web
+      pypi_project_json
+      refresh_saved_pkg_name_stub
+      return_sentinel_on_exception
+      slurp_user_projects_info
+      xmlrpc_user_packages
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      CachedPkgNameStub
+      Pypi
+   
+   .. rubric:: Exceptions
+
+   .. autosummary::
+   
+      MissingPackageNamesError
+   

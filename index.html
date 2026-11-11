@@ -1,165 +1,268 @@
-
-
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+<html lang="en" data-accent-color="pink" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Welcome to yp’s documentation! &mdash; yp 0.0.11 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
-      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
-
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>yp</title><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="API reference" href="api.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d88b86f9" />
+    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=2ceb65ce" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx_autodoc_typehints.css?v=057ac668" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link media="print" rel="stylesheet" type="text/css" href="_static/print.css?v=20ff2c19" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    
+  <meta property="og:type" content="website"/><meta property="og:title" content="yp"/>
+    <meta name="twitter:card" content="summary"/>
   
-      <script src="_static/jquery.js?v=5d32c60e"></script>
-      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=0c446633"></script>
+<link rel="alternate" type="text/markdown" href="index.html.md">
+<link rel="describedby" href="llms.txt" type="text/markdown">
+</head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="#">
+      
+      
+      <strong>yp</strong>
+    </a>
+    <div class="sy-head-nav" id="head-nav">
+      <nav class="sy-head-links"></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials">
+  <a href="https://github.com/thorwhalen/yp" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/yp.html">yp</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/yp.base.html">yp.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/yp.deps.html">yp.deps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/yp.tools.html">yp.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/yp.util.html">yp.util</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ai-agents.html">For AI agents</a></li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#">yp</a></li>
+<li><a class="reference internal" href="#example-usage">Example Usage</a></li>
+<li><a class="reference internal" href="#extras">Extras</a></li>
+<li><a class="reference internal" href="#skills">Skills</a></li>
+</ul>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="#"><span itemprop="name">yp</span></a>
+        <meta itemprop="position" content="1" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <article class="yue dark-code" role="main">
+          <!-- generated by epythet -->
+<section id="yp">
+<h1>yp<a class="headerlink" href="#yp" title="Link to this heading">#</a></h1>
+<p>A mapping view to pypi projects</p>
+<p>To install:	<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">yp</span></code></p>
+<p>See also: <code class="docutils literal notranslate"><span class="pre">pipoke</span></code>, for more pypi interaction tools.</p>
+</section>
+<section id="example-usage">
+<h1>Example Usage<a class="headerlink" href="#example-usage" title="Link to this heading">#</a></h1>
+<p>Get a mapping of all of <code class="docutils literal notranslate"><span class="pre">pypi</span></code> projects.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span data-line="1">&gt;&gt;&gt; from yp import Pypi
+</span><span data-line="2">&gt;&gt;&gt; p = Pypi()
+</span></pre></div>
+</div>
+<p>The keys of this mapping are the project names. There are lots!</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span data-line="1">&gt;&gt;&gt; len(p)  # doctest: +SKIP
+</span><span data-line="2">405120
+</span><span data-line="3">&gt;&gt;&gt; 'numpy' in p and 'dol' in p
+</span><span data-line="4">True
+</span><span data-line="5">&gt;&gt;&gt; 'no_way_this_is_a_package' in p
+</span><span data-line="6">False
+</span></pre></div>
+</div>
+<p>The values of the mapping are the corresponding project’s info, which is a
+nested dict of good stuff.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span data-line="1">&gt;&gt;&gt; info = p['numpy']
+</span><span data-line="2">&gt;&gt;&gt; list(info)
+</span><span data-line="3">['info', 'last_serial', 'releases', 'urls', 'vulnerabilities']
+</span></pre></div>
+</div>
+<p>Tip: To only get the info you want, you’ll</p>
+<p>The project info is obtained, live, making requests to the
+<code class="docutils literal notranslate"><span class="pre">https://pypi.python.org/pypi/{pkg_name}/json</span></code> API,
+but the list of all project names is actually taken from a local file.
+You should update that file regularly (but not TOO regularly!) to be in sync
+with pypi.org. To do so, do this:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span data-line="1">&gt;&gt;&gt; Pypi.refresh_cached_package_names()  # doctest: +SKIP
+</span></pre></div>
+</div>
+<p>If, on the other hand, you don’t want all projects of Pypi to be the collection
+you’re working with, you can specify what <code class="docutils literal notranslate"><span class="pre">user</span></code> they should belong to:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span data-line="1">&gt;&gt;&gt; p = Pypi(user='thorwhalen1')
+</span><span data-line="2">&gt;&gt;&gt; len(p)  # doctest: +SKIP
+</span><span data-line="3">131
+</span></pre></div>
+</div>
+<p>You can also explicitly give <code class="docutils literal notranslate"><span class="pre">Pypi</span></code> a collection of projects you want to work
+with:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span data-line="1">&gt;&gt;&gt; p = Pypi(proj_names={'numpy', 'pandas', 'dol'})
+</span><span data-line="2">&gt;&gt;&gt; len(p)
+</span><span data-line="3">3
+</span></pre></div>
+</div>
+<p>You can do a lot more by simply using the tools of <code class="docutils literal notranslate"><span class="pre">dol</span></code> to change the mapping
+you want to work with in all kinds of ways!</p>
+</section>
+<section id="extras">
+<h1>Extras<a class="headerlink" href="#extras" title="Link to this heading">#</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">yp</span></code> ships a cached list of every PyPI project name (<code class="docutils literal notranslate"><span class="pre">yp/data/pkg_list.tsv.gz</span></code>), so
+name lookups are instant and offline. The cache is loaded lazily – the first lookup
+pays for it, <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">yp</span></code> does not.</p>
+<p><code class="docutils literal notranslate"><span class="pre">yp.refresh_saved_pkg_name_stub()</span></code> fetches the current list and saves it to your app
+folder, which then takes precedence over the copy shipped with the package. (It writes
+there rather than into the installed package, which is read-only in many installs.)
+Pass <code class="docutils literal notranslate"><span class="pre">save_to=</span></code> to write elsewhere.</p>
+<p>I also refresh the shipped copy from time to time and push the results. You can find
+the list (as a text file with one name per line) here:
+https://raw.githubusercontent.com/thorwhalen/yp/refs/heads/master/yp/data/pkg_list.txt</p>
+</section>
+<section id="skills">
+<h1>Skills<a class="headerlink" href="#skills" title="Link to this heading">#</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">yp</span></code> ships <a class="reference external" href="https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview">AI agent skills</a>
+(SKILL.md files) that teach an agent how to drive its tools. They live in
+<code class="docutils literal notranslate"><span class="pre">yp/data/skills/</span></code> (so they install with the package) and are mirrored into
+<code class="docutils literal notranslate"><span class="pre">.claude/skills/</span></code> for Claude Code.</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Skill</p></th>
+<th class="head"><p>What it helps you do</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">yp-name-availability</span></code></p></td>
+<td><p>Find an <strong>available</strong> PyPI name for a new package: brainstorm → fast cached pre-filter → authoritative live check → present the free options.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">yp-name-cache</span></code></p></td>
+<td><p>Operate the cached PyPI name index: refresh it, check names fast/offline, understand freshness &amp; normalization caveats.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">yp-package-info</span></code></p></td>
+<td><p>Fetch live PyPI info: full project JSON, a tidy digest, latest version(s), last-upload time, a user’s projects, bulk download.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">yp-dependencies</span></code></p></td>
+<td><p>Inspect an installed package’s dependency tree (direct/transitive, required vs installed, version conflicts).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Install one into an agent host with <a class="reference external" href="https://github.com/github/gh-skill"><code class="docutils literal notranslate"><span class="pre">gh</span> <span class="pre">skill</span></code></a>:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span data-line="1">gh skill install thorwhalen/yp yp-name-availability
+</span></pre></div>
+</div>
+<p class="epythet-aggregates">This documentation as a single file: <a href="yp.md">yp.md</a> (Markdown, for agents).</p>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+
+<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-11-11 13:41 UTC from <a href="https://github.com/thorwhalen/yp/commit/c74a90ae5399478f40e24450852fa5788f4f150b">c74a90a</a> (master) · yp 0.0.13 · <a href="about-this-build.html">about this build</a></p>
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-next">
+    <a href="api.html">
+      <div class="page-info">
+        <span>Next</span>
+        <div class="title">API reference</div>
+      </div>
+      <i class="i-lucide chevron-right"></i>
+    </a>
+  </div></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright">
+  <p>
+    Made with
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials">
+  <a href="https://github.com/thorwhalen/yp" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div>
+    </div>
+  </div>
+</footer>
+      <script src="_static/documentation_options.js?v=9fc46840"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
-      <script src="_static/toggleprompt.js?v=d7ede5d2"></script>
       <script src="_static/clipboard.min.js?v=a7894cd8"></script>
-      <script src="_static/copybutton.js?v=f281be69"></script>
-    <script src="_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="yp" href="module_docs/yp.html" /> 
-</head>
-
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
-
-          
-          
-          <a href="#" class="icon icon-home">
-            yp
-          </a>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
-</div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/yp.html">yp</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/yp/base.html">yp.base</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/yp/deps.html">yp.deps</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/yp/tests.html">yp.tests</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/yp/tests/test_pkg_name_stub.html">yp.tests.test_pkg_name_stub</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/yp/tools.html">yp.tools</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/yp/util.html">yp.util</a></li>
-</ul>
-
-        </div>
-      </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="#">yp</a>
-      </nav>
-
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Welcome to yp’s documentation!</li>
-      <li class="wy-breadcrumbs-aside">
-            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
-      </li>
-  </ul>
-  <hr/>
-</div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
-  <section id="welcome-to-yp-s-documentation">
-<h1>Welcome to yp’s documentation!<a class="headerlink" href="#welcome-to-yp-s-documentation" title="Link to this heading"></a></h1>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/yp.html">yp</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/yp/base.html">yp.base</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/yp/base.html#yp.base.CachedPkgNameStub"><code class="docutils literal notranslate"><span class="pre">CachedPkgNameStub</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/yp/base.html#yp.base.MissingPackageNamesError"><code class="docutils literal notranslate"><span class="pre">MissingPackageNamesError</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/yp/base.html#yp.base.PKG_LIST_FILENAME"><code class="docutils literal notranslate"><span class="pre">PKG_LIST_FILENAME</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/yp/base.html#yp.base.Pypi"><code class="docutils literal notranslate"><span class="pre">Pypi</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/yp/base.html#yp.base.get_updated_pkg_name_stub"><code class="docutils literal notranslate"><span class="pre">get_updated_pkg_name_stub()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/yp/base.html#yp.base.info_of_pkg_from_web"><code class="docutils literal notranslate"><span class="pre">info_of_pkg_from_web()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/yp/base.html#yp.base.pkg_name_stub"><code class="docutils literal notranslate"><span class="pre">pkg_name_stub</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/yp/base.html#yp.base.pkg_names_legacy_pickle_filepath"><code class="docutils literal notranslate"><span class="pre">pkg_names_legacy_pickle_filepath</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/yp/base.html#yp.base.pkg_names_package_filepath"><code class="docutils literal notranslate"><span class="pre">pkg_names_package_filepath</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/yp/base.html#yp.base.pkg_names_user_filepath"><code class="docutils literal notranslate"><span class="pre">pkg_names_user_filepath</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/yp/base.html#yp.base.refresh_saved_pkg_name_stub"><code class="docutils literal notranslate"><span class="pre">refresh_saved_pkg_name_stub()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/yp/base.html#yp.base.return_sentinel_on_exception"><code class="docutils literal notranslate"><span class="pre">return_sentinel_on_exception()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/yp/base.html#yp.base.slurp_user_projects_info"><code class="docutils literal notranslate"><span class="pre">slurp_user_projects_info()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/yp/deps.html">yp.deps</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/yp/deps.html#yp.deps.build_nested_deps"><code class="docutils literal notranslate"><span class="pre">build_nested_deps()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/yp/deps.html#yp.deps.package_dependencies"><code class="docutils literal notranslate"><span class="pre">package_dependencies()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/yp/deps.html#yp.deps.package_dependencies_tree"><code class="docutils literal notranslate"><span class="pre">package_dependencies_tree()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/yp/deps.html#yp.deps.parse_pipdeptree"><code class="docutils literal notranslate"><span class="pre">parse_pipdeptree()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/yp/tests.html">yp.tests</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/yp/tests/test_pkg_name_stub.html">yp.tests.test_pkg_name_stub</a></li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/yp/tools.html">yp.tools</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/yp/tools.html#yp.tools.latest_release_upload_datetime"><code class="docutils literal notranslate"><span class="pre">latest_release_upload_datetime()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="module_docs/yp/tools.html#yp.tools.recent_versions"><code class="docutils literal notranslate"><span class="pre">recent_versions()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="module_docs/yp/util.html">yp.util</a></li>
-</ul>
-</div>
-</section>
-<section id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading"></a></h1>
-<ul class="simple">
-<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
-<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
-<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
-</ul>
-<p>Release: 0.0.11</p>
-<p>Last change: Aug 30, 2026</p>
-</section>
-
-
-           </div>
-          </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="module_docs/yp.html" class="btn btn-neutral float-right" title="yp" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p></p>
-  </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
-
-</footer>
-        </div>
-      </div>
-    </section>
-  </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
-
-</body>
+      <script src="_static/copybutton.js?v=fd10adb8"></script>
+      <script src="_static/shibuya.js?v=50760d75"></script></body>
 </html>

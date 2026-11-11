@@ -1,0 +1,13 @@
+yp.util
+=======
+
+.. automodule:: yp.util
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      dpath
+      ppath
+   

@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en" data-accent-color="pink" data-content_root="../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>yp.base - yp</title><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="yp.deps" href="yp.deps.html" /><link rel="prev" title="yp" href="yp.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d88b86f9" />
+    <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=2ceb65ce" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_autodoc_typehints.css?v=057ac668" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link media="print" rel="stylesheet" type="text/css" href="../_static/print.css?v=20ff2c19" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    
+  <meta property="og:type" content="website"/><meta property="og:title" content="yp.base"/>
+    <meta name="twitter:card" content="summary"/>
+  
+<link rel="alternate" type="text/markdown" href="yp.base.html.md">
+<link rel="describedby" href="../llms.txt" type="text/markdown">
+</head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="../index.html">
+      
+      
+      <strong>yp</strong>
+    </a>
+    <div class="sy-head-nav" id="head-nav">
+      <nav class="sy-head-links"></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials">
+  <a href="https://github.com/thorwhalen/yp" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="yp.html">yp</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">yp.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yp.deps.html">yp.deps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yp.tools.html">yp.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yp.util.html">yp.util</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../ai-agents.html">For AI agents</a></li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#yp.base.CachedPkgNameStub"><code class="docutils literal notranslate"><span class="pre">CachedPkgNameStub</span></code></a><ul>
+<li><a class="reference internal" href="#yp.base.CachedPkgNameStub.is_loaded"><code class="docutils literal notranslate"><span class="pre">CachedPkgNameStub.is_loaded</span></code></a></li>
+<li><a class="reference internal" href="#yp.base.CachedPkgNameStub.mapping"><code class="docutils literal notranslate"><span class="pre">CachedPkgNameStub.mapping</span></code></a></li>
+<li><a class="reference internal" href="#yp.base.CachedPkgNameStub.update_cache"><code class="docutils literal notranslate"><span class="pre">CachedPkgNameStub.update_cache()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#yp.base.MissingPackageNamesError"><code class="docutils literal notranslate"><span class="pre">MissingPackageNamesError</span></code></a></li>
+<li><a class="reference internal" href="#yp.base.PKG_LIST_FILENAME"><code class="docutils literal notranslate"><span class="pre">PKG_LIST_FILENAME</span></code></a></li>
+<li><a class="reference internal" href="#yp.base.Pypi"><code class="docutils literal notranslate"><span class="pre">Pypi</span></code></a><ul>
+<li><a class="reference internal" href="#yp.base.Pypi.live_is_available"><code class="docutils literal notranslate"><span class="pre">Pypi.live_is_available()</span></code></a></li>
+<li><a class="reference internal" href="#yp.base.Pypi.pkg_has_pypi_page"><code class="docutils literal notranslate"><span class="pre">Pypi.pkg_has_pypi_page()</span></code></a></li>
+<li><a class="reference internal" href="#yp.base.Pypi.refresh_cached_package_names"><code class="docutils literal notranslate"><span class="pre">Pypi.refresh_cached_package_names()</span></code></a></li>
+<li><a class="reference internal" href="#yp.base.Pypi.with_fresh_cached_package_names"><code class="docutils literal notranslate"><span class="pre">Pypi.with_fresh_cached_package_names()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#yp.base.get_updated_pkg_name_stub"><code class="docutils literal notranslate"><span class="pre">get_updated_pkg_name_stub()</span></code></a></li>
+<li><a class="reference internal" href="#yp.base.info_of_pkg_from_web"><code class="docutils literal notranslate"><span class="pre">info_of_pkg_from_web()</span></code></a></li>
+<li><a class="reference internal" href="#yp.base.pkg_name_stub"><code class="docutils literal notranslate"><span class="pre">pkg_name_stub</span></code></a></li>
+<li><a class="reference internal" href="#yp.base.pkg_names_legacy_pickle_filepath"><code class="docutils literal notranslate"><span class="pre">pkg_names_legacy_pickle_filepath</span></code></a></li>
+<li><a class="reference internal" href="#yp.base.pkg_names_package_filepath"><code class="docutils literal notranslate"><span class="pre">pkg_names_package_filepath</span></code></a></li>
+<li><a class="reference internal" href="#yp.base.pkg_names_user_filepath"><code class="docutils literal notranslate"><span class="pre">pkg_names_user_filepath</span></code></a></li>
+<li><a class="reference internal" href="#yp.base.pypi_project_json"><code class="docutils literal notranslate"><span class="pre">pypi_project_json()</span></code></a></li>
+<li><a class="reference internal" href="#yp.base.refresh_saved_pkg_name_stub"><code class="docutils literal notranslate"><span class="pre">refresh_saved_pkg_name_stub()</span></code></a></li>
+<li><a class="reference internal" href="#yp.base.return_sentinel_on_exception"><code class="docutils literal notranslate"><span class="pre">return_sentinel_on_exception()</span></code></a></li>
+<li><a class="reference internal" href="#yp.base.slurp_user_projects_info"><code class="docutils literal notranslate"><span class="pre">slurp_user_projects_info()</span></code></a></li>
+<li><a class="reference internal" href="#yp.base.xmlrpc_user_packages"><code class="docutils literal notranslate"><span class="pre">xmlrpc_user_packages()</span></code></a></li>
+</ul>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../index.html"><span itemprop="name">yp</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../api.html"><span itemprop="name">API reference</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="2" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="yp.html"><span itemprop="name">yp</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="3" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">yp.base</strong>
+        <meta itemprop="position" content="4" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <article class="yue dark-code" role="main">
+          <section id="module-yp.base">
+<span id="yp-base"></span><h1>yp.base<a class="headerlink" href="#module-yp.base" title="Link to this heading">#</a></h1>
+<p>Base functionality of yp</p>
+<p class="rubric">Module Attributes</p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#yp.base.PKG_LIST_FILENAME" title="yp.base.PKG_LIST_FILENAME"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PKG_LIST_FILENAME</span></code></a></p></td>
+<td><p>gzipped TSV of <code class="docutils literal notranslate"><span class="pre">pkg_name&lt;TAB&gt;pkg_stub</span></code> lines, where the tab and stub are omitted for the ~96% of projects whose stub equals their name.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#yp.base.pkg_names_package_filepath" title="yp.base.pkg_names_package_filepath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pkg_names_package_filepath</span></code></a></p></td>
+<td><p>Seed copy shipped inside the installed distribution (read-only in most installs).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#yp.base.pkg_names_user_filepath" title="yp.base.pkg_names_user_filepath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pkg_names_user_filepath</span></code></a></p></td>
+<td><p>Where <code class="docutils literal notranslate"><span class="pre">refresh_saved_pkg_name_stub</span></code> writes; takes precedence when it exists.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#yp.base.pkg_names_legacy_pickle_filepath" title="yp.base.pkg_names_legacy_pickle_filepath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pkg_names_legacy_pickle_filepath</span></code></a></p></td>
+<td><p>Pre-0.0.12 pickle cache, still read when no gzipped TSV is found.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#yp.base.pkg_name_stub" title="yp.base.pkg_name_stub"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pkg_name_stub</span></code></a></p></td>
+<td><p>Mapping of every PyPI project name to its normalized stub.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="rubric">Functions</p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">asis</span></code>(x)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#yp.base.get_updated_pkg_name_stub" title="yp.base.get_updated_pkg_name_stub"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_updated_pkg_name_stub</span></code></a>()</p></td>
+<td><p>Get <code class="docutils literal notranslate"><span class="pre">{pkg_name:</span> <span class="pre">pkg_stub}</span></code> data from pypi</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#yp.base.info_of_pkg_from_web" title="yp.base.info_of_pkg_from_web"><code class="xref py py-obj docutils literal notranslate"><span class="pre">info_of_pkg_from_web</span></code></a>(pkg_name)</p></td>
+<td><p>Get dict of information for a pkg_name</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#yp.base.pypi_project_json" title="yp.base.pypi_project_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pypi_project_json</span></code></a>(name, *[, timeout])</p></td>
+<td><p>The JSON API document of PyPI project <code class="docutils literal notranslate"><span class="pre">name</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#yp.base.refresh_saved_pkg_name_stub" title="yp.base.refresh_saved_pkg_name_stub"><code class="xref py py-obj docutils literal notranslate"><span class="pre">refresh_saved_pkg_name_stub</span></code></a>([verbose, ...])</p></td>
+<td><p>Update the <code class="docutils literal notranslate"><span class="pre">{pkg_name:</span> <span class="pre">pkg_stub}</span></code> stored data with a fresh call to <code class="docutils literal notranslate"><span class="pre">get_updated_pkg_name_stub</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#yp.base.return_sentinel_on_exception" title="yp.base.return_sentinel_on_exception"><code class="xref py py-obj docutils literal notranslate"><span class="pre">return_sentinel_on_exception</span></code></a>([...])</p></td>
+<td><p>Decorates a function so it will return a sentinel (default None) instead of raising an exception</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#yp.base.slurp_user_projects_info" title="yp.base.slurp_user_projects_info"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slurp_user_projects_info</span></code></a>(user, *[, ...])</p></td>
+<td><p>The list of projects that <code class="docutils literal notranslate"><span class="pre">user</span></code> owns or maintains on PyPI.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#yp.base.xmlrpc_user_packages" title="yp.base.xmlrpc_user_packages"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xmlrpc_user_packages</span></code></a>(user, *[, timeout])</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[(role,</span> <span class="pre">name),</span> <span class="pre">...]</span></code> for the projects <code class="docutils literal notranslate"><span class="pre">user</span></code> owns or maintains on PyPI.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="rubric">Classes</p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#yp.base.CachedPkgNameStub" title="yp.base.CachedPkgNameStub"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CachedPkgNameStub</span></code></a>([mapping])</p></td>
+<td><p>The <code class="docutils literal notranslate"><span class="pre">{pkg_name:</span> <span class="pre">pkg_stub}</span></code> mapping of every project on PyPI, loaded lazily.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#yp.base.Pypi" title="yp.base.Pypi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pypi</span></code></a>(*[, info_extractor, proj_names, user, ...])</p></td>
+<td><p>Get a mapping of all of <code class="docutils literal notranslate"><span class="pre">pypi</span></code> projects.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="rubric">Exceptions</p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#yp.base.MissingPackageNamesError" title="yp.base.MissingPackageNamesError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MissingPackageNamesError</span></code></a></p></td>
+<td><p>Raised when yp's cached list of PyPI project names cannot be found or read.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="yp.base.CachedPkgNameStub">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">yp.base.</span></span><span class="sig-name descname"><span class="pre">CachedPkgNameStub</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mapping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yp/base.html#CachedPkgNameStub"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#yp.base.CachedPkgNameStub" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">{pkg_name:</span> <span class="pre">pkg_stub}</span></code> mapping of every project on PyPI, loaded lazily.</p>
+<p>Reading the cache is deferred to first use, so <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">yp</span></code> stays cheap and,
+more importantly, never fails because of a missing data file: a missing cache
+raises <code class="docutils literal notranslate"><span class="pre">MissingPackageNamesError</span></code> – with an actionable message – only if and
+when the names are actually needed.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="gp">&gt;&gt;&gt; </span><span class="n">stub</span> <span class="o">=</span> <span class="n">CachedPkgNameStub</span><span class="p">()</span>
+</span><span data-line="2"><span class="gp">&gt;&gt;&gt; </span><span class="s1">'numpy'</span> <span class="ow">in</span> <span class="n">stub</span>
+</span><span data-line="3"><span class="go">True</span>
+</span><span data-line="4"><span class="gp">&gt;&gt;&gt; </span><span class="n">stub</span><span class="p">[</span><span class="s1">'scikit-learn'</span><span class="p">]</span>
+</span><span data-line="5"><span class="go">'scikit-learn'</span>
+</span><span data-line="6"><span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">stub</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">100_000</span>
+</span><span data-line="7"><span class="go">True</span>
+</span></pre></div>
+</div>
+<dl class="py property">
+<dt class="sig sig-object py" id="yp.base.CachedPkgNameStub.is_loaded">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">is_loaded</span></span><a class="headerlink" href="#yp.base.CachedPkgNameStub.is_loaded" title="Link to this definition">#</a></dt>
+<dd><p>Whether the cache has been read yet.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="yp.base.CachedPkgNameStub.mapping">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">mapping</span></span><a class="headerlink" href="#yp.base.CachedPkgNameStub.mapping" title="Link to this definition">#</a></dt>
+<dd><p>The underlying <code class="docutils literal notranslate"><span class="pre">dict</span></code>, read from cache on first access.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="yp.base.CachedPkgNameStub.update_cache">
+<span class="sig-name descname"><span class="pre">update_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mapping</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yp/base.html#CachedPkgNameStub.update_cache"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#yp.base.CachedPkgNameStub.update_cache" title="Link to this definition">#</a></dt>
+<dd><p>Replace the in-memory contents, keeping this object’s identity.</p>
+<p>Rebinding the module global instead would leave every <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">yp</span> <span class="pre">import</span>
+<span class="pre">pkg_name_stub</span></code> pointing at the stale mapping.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="yp.base.MissingPackageNamesError">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">yp.base.</span></span><span class="sig-name descname"><span class="pre">MissingPackageNamesError</span></span><a class="reference internal" href="../_modules/yp/base.html#MissingPackageNamesError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#yp.base.MissingPackageNamesError" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#FileNotFoundError" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileNotFoundError</span></code></a></p>
+<p>Raised when yp’s cached list of PyPI project names cannot be found or read.</p>
+<p>Previously this condition was swallowed, which left <code class="docutils literal notranslate"><span class="pre">pkg_name_stub</span></code> undefined
+and surfaced downstream as a bare <code class="docutils literal notranslate"><span class="pre">ImportError:</span> <span class="pre">cannot</span> <span class="pre">import</span> <span class="pre">name</span>
+<span class="pre">'pkg_name_stub'</span></code> – with no hint as to the real cause.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="yp.base.PKG_LIST_FILENAME">
+<span class="sig-prename descclassname"><span class="pre">yp.base.</span></span><span class="sig-name descname"><span class="pre">PKG_LIST_FILENAME</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'pkg_list.tsv.gz'</span></span><a class="headerlink" href="#yp.base.PKG_LIST_FILENAME" title="Link to this definition">#</a></dt>
+<dd><p>gzipped TSV of <code class="docutils literal notranslate"><span class="pre">pkg_name&lt;TAB&gt;pkg_stub</span></code> lines, where the
+tab and stub are omitted for the ~96% of projects whose stub equals their name.
+That keeps the copy shipped in the distribution at ~4MB, against ~27MB for the
+equivalent pickle, and avoids unpickling data at import time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Canonical cache file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="yp.base.Pypi">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">yp.base.</span></span><span class="sig-name descname"><span class="pre">Pypi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">info_extractor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proj_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict_getitem</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yp/base.html#Pypi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#yp.base.Pypi" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">KvReader</span></code></p>
+<p>Get a mapping of all of <code class="docutils literal notranslate"><span class="pre">pypi</span></code> projects.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Pypi</span><span class="p">()</span>
+</span></pre></div>
+</div>
+<p>The keys of this mapping are the project names. There are lots!</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+</span><span data-line="2"><span class="go">405120</span>
+</span><span data-line="3"><span class="gp">&gt;&gt;&gt; </span><span class="s1">'numpy'</span> <span class="ow">in</span> <span class="n">p</span> <span class="ow">and</span> <span class="s1">'dol'</span> <span class="ow">in</span> <span class="n">p</span>
+</span><span data-line="4"><span class="go">True</span>
+</span><span data-line="5"><span class="gp">&gt;&gt;&gt; </span><span class="s1">'no_way_this_is_a_package'</span> <span class="ow">in</span> <span class="n">p</span>
+</span><span data-line="6"><span class="go">False</span>
+</span></pre></div>
+</div>
+<p>The values of the mapping are the corresponding project’s info, which is a
+nested dict of good stuff.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="gp">&gt;&gt;&gt; </span><span class="n">info</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="s1">'numpy'</span><span class="p">]</span>
+</span><span data-line="2"><span class="gp">&gt;&gt;&gt; </span><span class="p">{</span><span class="s1">'info'</span><span class="p">,</span> <span class="s1">'last_serial'</span><span class="p">,</span> <span class="s1">'releases'</span><span class="p">,</span> <span class="s1">'urls'</span><span class="p">}</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+</span><span data-line="3"><span class="go">True</span>
+</span></pre></div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>To only get the info you want, you’ll</p>
+</div>
+<p>The project info is obtained, live, making requests to the
+<code class="docutils literal notranslate"><span class="pre">https://pypi.python.org/pypi/{pkg_name}/json</span></code> API,
+but the list of all project names is actually taken from a local file.
+You should update that file regularly (but not TOO regularly!) to be in sync
+with pypi.org. To do so, do this:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="gp">&gt;&gt;&gt; </span><span class="n">Pypi</span><span class="o">.</span><span class="n">refresh_cached_package_names</span><span class="p">()</span>
+</span></pre></div>
+</div>
+<p>If, on the other hand, you don’t want all projects of Pypi to be the collection
+you’re working with, you can specify what <code class="docutils literal notranslate"><span class="pre">user</span></code> they should belong to:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Pypi</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="s1">'thorwhalen1'</span><span class="p">)</span>
+</span><span data-line="2"><span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+</span><span data-line="3"><span class="go">131</span>
+</span></pre></div>
+</div>
+<p>You can also explicitly give <code class="docutils literal notranslate"><span class="pre">Pypi</span></code> a collection of projects you want to work
+with:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Pypi</span><span class="p">(</span><span class="n">proj_names</span><span class="o">=</span><span class="p">{</span><span class="s1">'numpy'</span><span class="p">,</span> <span class="s1">'pandas'</span><span class="p">,</span> <span class="s1">'dol'</span><span class="p">})</span>
+</span><span data-line="2"><span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+</span><span data-line="3"><span class="go">3</span>
+</span></pre></div>
+</div>
+<p>You can do a lot more by simply using the tools of <code class="docutils literal notranslate"><span class="pre">dol</span></code> to change the mapping
+you want to work with in all kinds of ways!</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="yp.base.Pypi.live_is_available">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">live_is_available</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pkg_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yp/base.html#Pypi.live_is_available"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#yp.base.Pypi.live_is_available" title="Link to this definition">#</a></dt>
+<dd><p>Check if a package name is available, live (directly on pypi, not a
+cache). Returns <code class="docutils literal notranslate"><span class="pre">True</span></code> iff the name is free to register.</p>
+<p>Uses the PyPI JSON API as the authoritative signal (404 =&gt; free,
+200 =&gt; taken), which is more reliable than scraping the HTML project
+page (that can return a soft 200 for non-existent names in some network
+environments). PyPI normalizes names per PEP 503, so separator/case
+variants of a taken name correctly report as unavailable.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="yp.base.Pypi.pkg_has_pypi_page">
+<span class="sig-name descname"><span class="pre">pkg_has_pypi_page</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pkg_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yp/base.html#Pypi.pkg_has_pypi_page"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#yp.base.Pypi.pkg_has_pypi_page" title="Link to this definition">#</a></dt>
+<dd><p>Return True iff <code class="docutils literal notranslate"><span class="pre">pkg_name</span></code> has a project on PyPI (i.e. the name is
+taken). Uses the authoritative JSON API (see <code class="docutils literal notranslate"><span class="pre">_pkg_exists_on_pypi</span></code>).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="yp.base.Pypi.refresh_cached_package_names">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">refresh_cached_package_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#yp.base.Pypi.refresh_cached_package_names" title="Link to this definition">#</a></dt>
+<dd><p>Download and save a fresh copy of pypi’s package names</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="yp.base.Pypi.with_fresh_cached_package_names">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">with_fresh_cached_package_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yp/base.html#Pypi.with_fresh_cached_package_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#yp.base.Pypi.with_fresh_cached_package_names" title="Link to this definition">#</a></dt>
+<dd><p>Download and save a fresh copy of pypi’s package names</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="yp.base.get_updated_pkg_name_stub">
+<span class="sig-prename descclassname"><span class="pre">yp.base.</span></span><span class="sig-name descname"><span class="pre">get_updated_pkg_name_stub</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yp/base.html#get_updated_pkg_name_stub"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#yp.base.get_updated_pkg_name_stub" title="Link to this definition">#</a></dt>
+<dd><p>Get <code class="docutils literal notranslate"><span class="pre">{pkg_name:</span> <span class="pre">pkg_stub}</span></code> data from pypi</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">{pkg_name:</span> <span class="pre">pkg_stub,</span> <span class="pre">...}</span></code> dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="yp.base.info_of_pkg_from_web">
+<span class="sig-prename descclassname"><span class="pre">yp.base.</span></span><span class="sig-name descname"><span class="pre">info_of_pkg_from_web</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pkg_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yp/base.html#info_of_pkg_from_web"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#yp.base.info_of_pkg_from_web" title="Link to this definition">#</a></dt>
+<dd><p>Get dict of information for a pkg_name</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pkg_name</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="yp.base.pkg_name_stub">
+<span class="sig-prename descclassname"><span class="pre">yp.base.</span></span><span class="sig-name descname"><span class="pre">pkg_name_stub</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">CachedPkgNameStub(&lt;834011</span> <span class="pre">names&gt;)</span></span><a class="headerlink" href="#yp.base.pkg_name_stub" title="Link to this definition">#</a></dt>
+<dd><p>Mapping of every PyPI project name to its normalized stub. Loaded on first use.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="yp.base.pkg_names_legacy_pickle_filepath">
+<span class="sig-prename descclassname"><span class="pre">yp.base.</span></span><span class="sig-name descname"><span class="pre">pkg_names_legacy_pickle_filepath</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PosixPath('/home/runner/work/yp/yp/yp/data/pkg_list.p')</span></span><a class="headerlink" href="#yp.base.pkg_names_legacy_pickle_filepath" title="Link to this definition">#</a></dt>
+<dd><p>Pre-0.0.12 pickle cache, still read when no gzipped TSV is found.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="yp.base.pkg_names_package_filepath">
+<span class="sig-prename descclassname"><span class="pre">yp.base.</span></span><span class="sig-name descname"><span class="pre">pkg_names_package_filepath</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PosixPath('/home/runner/work/yp/yp/yp/data/pkg_list.tsv.gz')</span></span><a class="headerlink" href="#yp.base.pkg_names_package_filepath" title="Link to this definition">#</a></dt>
+<dd><p>Seed copy shipped inside the installed distribution (read-only in most installs).</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="yp.base.pkg_names_user_filepath">
+<span class="sig-prename descclassname"><span class="pre">yp.base.</span></span><span class="sig-name descname"><span class="pre">pkg_names_user_filepath</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PosixPath('/home/runner/.config/yp/pkg_list.tsv.gz')</span></span><a class="headerlink" href="#yp.base.pkg_names_user_filepath" title="Link to this definition">#</a></dt>
+<dd><p>Where <code class="docutils literal notranslate"><span class="pre">refresh_saved_pkg_name_stub</span></code> writes; takes precedence when it exists.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="yp.base.pypi_project_json">
+<span class="sig-prename descclassname"><span class="pre">yp.base.</span></span><span class="sig-name descname"><span class="pre">pypi_project_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yp/base.html#pypi_project_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#yp.base.pypi_project_json" title="Link to this definition">#</a></dt>
+<dd><p>The JSON API document of PyPI project <code class="docutils literal notranslate"><span class="pre">name</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="yp.base.refresh_saved_pkg_name_stub">
+<span class="sig-prename descclassname"><span class="pre">yp.base.</span></span><span class="sig-name descname"><span class="pre">refresh_saved_pkg_name_stub</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_to</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_text_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yp/base.html#refresh_saved_pkg_name_stub"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#yp.base.refresh_saved_pkg_name_stub" title="Link to this definition">#</a></dt>
+<dd><p>Update the <code class="docutils literal notranslate"><span class="pre">{pkg_name:</span> <span class="pre">pkg_stub}</span></code> stored data with a fresh call to
+<code class="docutils literal notranslate"><span class="pre">get_updated_pkg_name_stub</span></code>.</p>
+<p>The refreshed copy is written to the user’s app folder by default, not into the
+installed package, which is read-only in many installs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_to</strong> – Where to write the gzipped TSV cache.
+Defaults to <code class="docutils literal notranslate"><span class="pre">pkg_names_user_filepath</span></code>.</p></li>
+<li><p><strong>write_text_file</strong> – Also write a plain <code class="docutils literal notranslate"><span class="pre">pkg_list.txt</span></code> of the names, one per
+line, alongside <code class="docutils literal notranslate"><span class="pre">save_to</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="yp.base.return_sentinel_on_exception">
+<span class="sig-prename descclassname"><span class="pre">yp.base.</span></span><span class="sig-name descname"><span class="pre">return_sentinel_on_exception</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">caught_exceptions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(&lt;class</span> <span class="pre">'Exception'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sentinel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yp/base.html#return_sentinel_on_exception"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#yp.base.return_sentinel_on_exception" title="Link to this definition">#</a></dt>
+<dd><p>Decorates a function so it will return a sentinel (default None) instead of
+raising an exception</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="yp.base.slurp_user_projects_info">
+<span class="sig-prename descclassname"><span class="pre">yp.base.</span></span><span class="sig-name descname"><span class="pre">slurp_user_projects_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_packages</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;function</span> <span class="pre">xmlrpc_user_packages&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;function</span> <span class="pre">pypi_project_json&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_workers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yp/base.html#slurp_user_projects_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#yp.base.slurp_user_projects_info" title="Link to this definition">#</a></dt>
+<dd><p>The list of projects that <code class="docutils literal notranslate"><span class="pre">user</span></code> owns or maintains on PyPI.</p>
+<p>Each record has <code class="docutils literal notranslate"><span class="pre">name</span></code>, <code class="docutils literal notranslate"><span class="pre">href</span></code> (the project’s PyPI page) and <code class="docutils literal notranslate"><span class="pre">role</span></code>
+(<code class="docutils literal notranslate"><span class="pre">'owner'</span></code> or <code class="docutils literal notranslate"><span class="pre">'maintainer'</span></code>). With <code class="docutils literal notranslate"><span class="pre">with_details=True</span></code> it also has
+<code class="docutils literal notranslate"><span class="pre">description</span></code> (the summary), <code class="docutils literal notranslate"><span class="pre">version</span></code> and <code class="docutils literal notranslate"><span class="pre">date</span></code> (upload time of the
+last release), fetched concurrently from the JSON API: one request per project,
+so expect some seconds for an account with hundreds of projects.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">cache_results</span></code> is True (the default), results are cached on disk, in
+<code class="docutils literal notranslate"><span class="pre">slurp_user_projects_info.user_projects_info_cache_folder</span></code>.
+If <code class="docutils literal notranslate"><span class="pre">refresh</span></code> is True, the cache is refreshed.
+A cache written without details is refetched when details are asked for.</p>
+<p><code class="docutils literal notranslate"><span class="pre">user_packages</span></code> (<code class="docutils literal notranslate"><span class="pre">user</span> <span class="pre">-&gt;</span> <span class="pre">[(role,</span> <span class="pre">name),</span> <span class="pre">...]</span></code>) and <code class="docutils literal notranslate"><span class="pre">project_json</span></code>
+(<code class="docutils literal notranslate"><span class="pre">name</span> <span class="pre">-&gt;</span> <span class="pre">dict</span></code>) are the transports; the defaults call PyPI.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="gp">&gt;&gt;&gt; </span><span class="n">infos</span> <span class="o">=</span> <span class="n">slurp_user_projects_info</span><span class="p">(</span><span class="s1">'thorwhalen1'</span><span class="p">)</span>
+</span><span data-line="2"><span class="gp">&gt;&gt;&gt; </span><span class="nb">sorted</span><span class="p">(</span><span class="n">infos</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</span><span data-line="3"><span class="go">['href', 'name', 'role']</span>
+</span></pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="yp.base.xmlrpc_user_packages">
+<span class="sig-prename descclassname"><span class="pre">yp.base.</span></span><span class="sig-name descname"><span class="pre">xmlrpc_user_packages</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/yp/base.html#xmlrpc_user_packages"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#yp.base.xmlrpc_user_packages" title="Link to this definition">#</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">[(role,</span> <span class="pre">name),</span> <span class="pre">...]</span></code> for the projects <code class="docutils literal notranslate"><span class="pre">user</span></code> owns or maintains on PyPI.</p>
+<p>Calls PyPI’s XML-RPC <code class="docutils literal notranslate"><span class="pre">user_packages</span></code> method, the only official way to list an
+account’s projects (deprecated by PyPI but still answered). The HTML user page
+(<code class="docutils literal notranslate"><span class="pre">https://pypi.org/user/{user}/</span></code>) answers scripts with a JavaScript challenge,
+so it cannot be used.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="gp">&gt;&gt;&gt; </span><span class="n">xmlrpc_user_packages</span><span class="p">(</span><span class="s1">'thorwhalen1'</span><span class="p">)[:</span><span class="mi">2</span><span class="p">]</span>
+</span><span data-line="2"><span class="go">[['Owner', 'accompy'], ['Owner', 'aix']]</span>
+</span></pre></div>
+</div>
+<dl class="field-list simple">
+</dl>
+</dd></dl>
+
+</section>
+
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-prev">
+    <a href="yp.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Previous</span><div class="title">yp</div></div>
+    </a>
+  </div><div class="navigation-next">
+    <a href="yp.deps.html">
+      <div class="page-info">
+        <span>Next</span>
+        <div class="title">yp.deps</div>
+      </div>
+      <i class="i-lucide chevron-right"></i>
+    </a>
+  </div></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright">
+  <p>
+    Made with
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials">
+  <a href="https://github.com/thorwhalen/yp" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div>
+    </div>
+  </div>
+</footer>
+      <script src="../_static/documentation_options.js?v=9fc46840"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=fd10adb8"></script>
+      <script src="../_static/shibuya.js?v=50760d75"></script></body>
+</html>

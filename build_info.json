@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "built_at": "2026-11-11T13:41:04Z",
+  "package": {
+    "name": "yp",
+    "version": "0.0.13",
+    "display_name": "yp",
+    "source": "setup.cfg"
+  },
+  "git": {
+    "available": true,
+    "commit": "c74a90ae5399478f40e24450852fa5788f4f150b",
+    "short_commit": "c74a90a",
+    "branch": "master",
+    "tags": [
+      "0.0.13"
+    ],
+    "dirty": false,
+    "remote_url": "https://github.com/thorwhalen/yp",
+    "commit_url": "https://github.com/thorwhalen/yp/commit/c74a90ae5399478f40e24450852fa5788f4f150b",
+    "error": null
+  },
+  "ci": {
+    "provider": "github",
+    "repository": "thorwhalen/yp",
+    "sha": "238f5571f78c7e1cbc8fd0c80710a7ab00a6b26c",
+    "sha_in_history": true,
+    "ref": "refs/heads/master",
+    "ref_name": "master",
+    "run_id": "43031084406",
+    "run_url": "https://github.com/thorwhalen/yp/actions/runs/43031084406",
+    "server_url": "https://github.com"
+  },
+  "tools": {
+    "epythet": "0.2.22",
+    "sphinx": "9.1.1",
+    "docutils": "0.22.4",
+    "python": "3.12.16"
+  },
+  "config": {
+    "theme": "auto",
+    "html_theme": "shibuya",
+    "accent": "#87356b",
+    "mode": "auto",
+    "api_generator": "autosummary",
+    "ignore": [
+      "tests/",
+      "scrap/",
+      "examples/"
+    ],
+    "agent_outputs": true,
+    "aggregates": [
+      "md"
+    ],
+    "ai_artifacts": true,
+    "provenance": true,
+    "docs_dir": "docsrc"
+  },
+  "site": {
+    "modules_documented": 5,
+    "objects_documented": 28
+  },
+  "pypi": {
+    "checked": true,
+    "latest": "0.0.13",
+    "relation": "same",
+    "error": null
+  },
+  "reproduce": "git clone https://github.com/thorwhalen/yp && cd yp\ngit checkout c74a90ae5399478f40e24450852fa5788f4f150b\npip install \"epythet==0.2.22\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "warnings": [],
+  "alignment": {
+    "aligned": true,
+    "notes": []
+  }
+}

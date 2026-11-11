@@ -1,0 +1,16 @@
+# yp
+
+> A mapping view to pypi projects
+
+
+## Pages in this subsection
+
+- [yp](yp.html.md): A mapping view of pypi
+- [yp.base](yp.base.html.md): Base functionality of yp
+- [yp.deps](yp.deps.html.md): Tools for getting dependencies info.
+- [yp.tools](yp.tools.html.md): A medley of yp-derived tools for working with pypi
+- [yp.util](yp.util.html.md): Utils for yp
+
+## Optional
+
+- [Top-level llms.txt](../llms.txt): Complete documentation index.

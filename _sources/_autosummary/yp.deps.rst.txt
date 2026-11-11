@@ -1,0 +1,15 @@
+yp.deps
+=======
+
+.. automodule:: yp.deps
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      build_nested_deps
+      package_dependencies
+      package_dependencies_tree
+      parse_pipdeptree
+   

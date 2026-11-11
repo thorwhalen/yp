@@ -1,4 +1,0 @@
-yp.deps
-=======
-.. automodule:: yp.deps
-   :members:
