@@ -110,11 +110,6 @@ def test_formats_direct(parsed):
         package_dependencies("app", "nope", **kw)
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="transitive mode looks the requirement up in the dependency's own deps "
-    "(flat_deps[dep][dep]), so required versions are always dropped",
-)
 def test_formats_transitive_keep_requirements(parsed):
     info, flat = parsed
     out = package_dependencies(
