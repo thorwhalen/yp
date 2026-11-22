@@ -176,6 +176,14 @@ def parse_pipdeptree(data):
     return info_by_key, flat_deps
 
 
+def _requirement_of(dep_key, flat_deps):
+    """First non-empty required-version string any package declares for ``dep_key``."""
+    for deps in flat_deps.values():
+        if deps.get(dep_key):
+            return deps[dep_key]
+    return ""
+
+
 def build_nested_deps(package_key, flat_deps=None):
     """
     Recursively build a nested dict of dependencies for `package_key`.
@@ -253,11 +261,7 @@ def package_dependencies(
             details = []
             for dep_key in all_deps:
                 # Find which package requires this dependency to get required_version
-                required_version = ""
-                for pkg, deps in flat_deps.items():
-                    if dep_key in deps:
-                        required_version = deps[dep_key]
-                        break
+                required_version = _requirement_of(dep_key, flat_deps)
 
                 pkg_info = info_by_key[dep_key]
                 installed = pkg_info["installed_version"]
@@ -313,8 +317,7 @@ def package_dependencies(
 
         collect_deps(package_key)
         dep_items = [
-            (dep_key, flat_deps.get(dep_key, {}).get(dep_key, ""))
-            for dep_key in all_deps
+            (dep_key, _requirement_of(dep_key, flat_deps)) for dep_key in all_deps
         ]
     else:
         # Only immediate dependencies
