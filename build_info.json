@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "built_at": "2026-11-22T20:36:45Z",
+  "built_at": "2026-11-22T22:09:42Z",
   "package": {
     "name": "yp",
     "version": "0.0.15",
@@ -9,24 +9,24 @@
   },
   "git": {
     "available": true,
-    "commit": "e7975786fe534370aa6f3bea06c93b33403a79fe",
-    "short_commit": "e797578",
+    "commit": "d376a633071b80843ba69e538d7d65d81ebc141e",
+    "short_commit": "d376a63",
     "branch": "master",
     "tags": [],
     "dirty": false,
     "remote_url": "https://github.com/thorwhalen/yp",
-    "commit_url": "https://github.com/thorwhalen/yp/commit/e7975786fe534370aa6f3bea06c93b33403a79fe",
+    "commit_url": "https://github.com/thorwhalen/yp/commit/d376a633071b80843ba69e538d7d65d81ebc141e",
     "error": null
   },
   "ci": {
     "provider": "github",
     "repository": "thorwhalen/yp",
-    "sha": "e7975786fe534370aa6f3bea06c93b33403a79fe",
+    "sha": "d376a633071b80843ba69e538d7d65d81ebc141e",
     "sha_in_history": true,
     "ref": "refs/heads/master",
     "ref_name": "master",
-    "run_id": "45067249863",
-    "run_url": "https://github.com/thorwhalen/yp/actions/runs/45067249863",
+    "run_id": "45075997499",
+    "run_url": "https://github.com/thorwhalen/yp/actions/runs/45075997499",
     "server_url": "https://github.com"
   },
   "tools": {
@@ -64,7 +64,7 @@
     "relation": "same",
     "error": null
   },
-  "reproduce": "git clone https://github.com/thorwhalen/yp && cd yp\ngit checkout e7975786fe534370aa6f3bea06c93b33403a79fe\npip install \"epythet==0.2.23\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/thorwhalen/yp && cd yp\ngit checkout d376a633071b80843ba69e538d7d65d81ebc141e\npip install \"epythet==0.2.23\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
     "aligned": true,
