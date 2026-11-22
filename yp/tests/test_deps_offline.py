@@ -14,23 +14,51 @@ TREE = [
     {
         "package": {"key": "app", "package_name": "app", "installed_version": "1.0"},
         "dependencies": [
-            {"key": "lib-a", "package_name": "lib_a", "installed_version": "2.0",
-             "required_version": ">=1.0"},
-            {"key": "lib-b", "package_name": "lib_b", "installed_version": "0.5",
-             "required_version": ">=1.0"},
+            {
+                "key": "lib-a",
+                "package_name": "lib_a",
+                "installed_version": "2.0",
+                "required_version": ">=1.0",
+            },
+            {
+                "key": "lib-b",
+                "package_name": "lib_b",
+                "installed_version": "0.5",
+                "required_version": ">=1.0",
+            },
         ],
     },
     {
-        "package": {"key": "lib-a", "package_name": "lib_a", "installed_version": "2.0"},
+        "package": {
+            "key": "lib-a",
+            "package_name": "lib_a",
+            "installed_version": "2.0",
+        },
         "dependencies": [
-            {"key": "lib-c", "package_name": "lib_c", "installed_version": "3.1",
-             "required_version": "<4"},
+            {
+                "key": "lib-c",
+                "package_name": "lib_c",
+                "installed_version": "3.1",
+                "required_version": "<4",
+            },
         ],
     },
-    {"package": {"key": "lib-b", "package_name": "lib_b", "installed_version": "0.5"},
-     "dependencies": []},
-    {"package": {"key": "lib-c", "package_name": "lib_c", "installed_version": "3.1"},
-     "dependencies": []},
+    {
+        "package": {
+            "key": "lib-b",
+            "package_name": "lib_b",
+            "installed_version": "0.5",
+        },
+        "dependencies": [],
+    },
+    {
+        "package": {
+            "key": "lib-c",
+            "package_name": "lib_c",
+            "installed_version": "3.1",
+        },
+        "dependencies": [],
+    },
 ]
 
 
@@ -50,7 +78,8 @@ def test_build_nested_deps(parsed):
     _, flat = parsed
     nested = build_nested_deps("app", flat)
     assert nested["lib-a"]["dependencies"]["lib-c"] == {
-        "required_version": "<4", "dependencies": {},
+        "required_version": "<4",
+        "dependencies": {},
     }
     assert nested["lib-b"]["dependencies"] == {}
 
@@ -60,7 +89,8 @@ def test_names_transitive_and_direct(parsed):
     kw = dict(flat_deps=flat, info_by_key=info)
     assert sorted(package_dependencies("app", **kw)) == ["lib_a", "lib_b", "lib_c"]
     assert sorted(package_dependencies("app", include_transitive=False, **kw)) == [
-        "lib_a", "lib_b",
+        "lib_a",
+        "lib_b",
     ]
 
 
@@ -68,10 +98,12 @@ def test_formats_direct(parsed):
     info, flat = parsed
     kw = dict(flat_deps=flat, info_by_key=info, include_transitive=False)
     assert sorted(package_dependencies("app", "names_with_req", **kw)) == [
-        "lib_a>=1.0", "lib_b>=1.0",
+        "lib_a>=1.0",
+        "lib_b>=1.0",
     ]
     assert sorted(package_dependencies("app", "tuples", **kw)) == [
-        ("lib_a", ">=", "1.0"), ("lib_b", ">=", "1.0"),
+        ("lib_a", ">=", "1.0"),
+        ("lib_b", ">=", "1.0"),
     ]
     assert package_dependencies("lib-b", "tuples", **kw) == []
     with pytest.raises(ValueError, match="unknown format"):
@@ -85,7 +117,9 @@ def test_formats_direct(parsed):
 )
 def test_formats_transitive_keep_requirements(parsed):
     info, flat = parsed
-    out = package_dependencies("app", "names_with_req", flat_deps=flat, info_by_key=info)
+    out = package_dependencies(
+        "app", "names_with_req", flat_deps=flat, info_by_key=info
+    )
     assert "lib_a>=1.0" in out
 
 
@@ -128,6 +162,9 @@ def test_package_dependencies_tree_with_fake_subprocess(monkeypatch):
     monkeypatch.setattr(
         deps.subprocess, "run", lambda c, **k: subprocess.CompletedProcess(c, 0, "", "")
     )
-    assert package_dependencies_tree("x", return_none_if_package_not_installed=True) is None
+    assert (
+        package_dependencies_tree("x", return_none_if_package_not_installed=True)
+        is None
+    )
     with pytest.raises(ValueError, match="installed"):
         package_dependencies_tree("x")
