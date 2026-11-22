@@ -483,242 +483,248 @@ data-aria-dark="Switch to auto color mode">
 
 </span><span data-line="338">
 </span><span data-line="339">
-</span><span data-line="340"><span class="k">def</span><span class="w"> </span><span class="nf">_project_details</span><span class="p">(</span><span class="n">project_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-</span><span data-line="341"><span class="w">    </span><span class="sd">"""``description``, ``version`` and ``date`` (of the last release) of a project."""</span>
-</span><span data-line="342">    <span class="n">info</span> <span class="o">=</span> <span class="n">project_json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"info"</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
-</span><span data-line="343">    <span class="n">upload_times</span> <span class="o">=</span> <span class="p">[</span>
-</span><span data-line="344">        <span class="n">f</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"upload_time_iso_8601"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">f</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"upload_time"</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">""</span>
-</span><span data-line="345">        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">project_json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"urls"</span><span class="p">)</span> <span class="ow">or</span> <span class="p">[]</span>
-</span><span data-line="346">    <span class="p">]</span>
-</span><span data-line="347">    <span class="k">return</span> <span class="p">{</span>
-</span><span data-line="348">        <span class="s2">"description"</span><span class="p">:</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"summary"</span><span class="p">)</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="349">        <span class="s2">"version"</span><span class="p">:</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"version"</span><span class="p">)</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="350">        <span class="s2">"date"</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="n">upload_times</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="351">    <span class="p">}</span>
-</span><span data-line="352">
-</span><span data-line="353">
-</span><span data-line="354"><span class="k">def</span><span class="w"> </span><span class="nf">_add_details</span><span class="p">(</span><span class="n">projects_info</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">project_json</span><span class="p">,</span> <span class="n">max_workers</span><span class="p">):</span>
-</span><span data-line="355"><span class="w">    </span><span class="sd">"""Add the ``_project_details`` keys to each record, fetching concurrently.</span>
+</span><span data-line="340"><span class="n">_DETAIL_KEYS</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">((</span><span class="s2">"description"</span><span class="p">,</span> <span class="s2">"version"</span><span class="p">,</span> <span class="s2">"date"</span><span class="p">))</span>
+</span><span data-line="341">
+</span><span data-line="342">
+</span><span data-line="343"><span class="k">def</span><span class="w"> </span><span class="nf">_project_details</span><span class="p">(</span><span class="n">project_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span data-line="344"><span class="w">    </span><span class="sd">"""``description``, ``version`` and ``date`` (of the last release) of a project."""</span>
+</span><span data-line="345">    <span class="n">info</span> <span class="o">=</span> <span class="n">project_json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"info"</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
+</span><span data-line="346">    <span class="n">upload_times</span> <span class="o">=</span> <span class="p">[</span>
+</span><span data-line="347">        <span class="n">f</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"upload_time_iso_8601"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">f</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"upload_time"</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">""</span>
+</span><span data-line="348">        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">project_json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"urls"</span><span class="p">)</span> <span class="ow">or</span> <span class="p">[]</span>
+</span><span data-line="349">    <span class="p">]</span>
+</span><span data-line="350">    <span class="k">return</span> <span class="p">{</span>
+</span><span data-line="351">        <span class="s2">"description"</span><span class="p">:</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"summary"</span><span class="p">)</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="352">        <span class="s2">"version"</span><span class="p">:</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"version"</span><span class="p">)</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="353">        <span class="s2">"date"</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="n">upload_times</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span> <span class="ow">or</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="354">    <span class="p">}</span>
+</span><span data-line="355">
 </span><span data-line="356">
-</span><span data-line="357"><span class="sd">    A project whose JSON cannot be fetched keeps ``None`` details (with a warning),</span>
-</span><span data-line="358"><span class="sd">    rather than failing the whole listing.</span>
-</span><span data-line="359"><span class="sd">    """</span>
-</span><span data-line="360">    <span class="kn">from</span><span class="w"> </span><span class="nn">concurrent.futures</span><span class="w"> </span><span class="kn">import</span> <span class="n">ThreadPoolExecutor</span>
-</span><span data-line="361">
-</span><span data-line="362">    <span class="k">def</span><span class="w"> </span><span class="nf">details</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
-</span><span data-line="363">        <span class="k">try</span><span class="p">:</span>
-</span><span data-line="364">            <span class="k">return</span> <span class="n">_project_details</span><span class="p">(</span><span class="n">project_json</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
-</span><span data-line="365">        <span class="k">except</span> <span class="n">RequestException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-</span><span data-line="366">            <span class="n">failed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
-</span><span data-line="367">            <span class="k">return</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">((</span><span class="s2">"description"</span><span class="p">,</span> <span class="s2">"version"</span><span class="p">,</span> <span class="s2">"date"</span><span class="p">))</span>
-</span><span data-line="368">
-</span><span data-line="369">    <span class="n">failed</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span data-line="370">    <span class="k">with</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="n">max_workers</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
-</span><span data-line="371">        <span class="n">all_details</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">details</span><span class="p">,</span> <span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">projects_info</span><span class="p">])</span>
-</span><span data-line="372">        <span class="n">projects_info</span> <span class="o">=</span> <span class="p">[{</span><span class="o">**</span><span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">x</span><span class="p">}</span> <span class="k">for</span> <span class="n">d</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">projects_info</span><span class="p">,</span> <span class="n">all_details</span><span class="p">)]</span>
-</span><span data-line="373">    <span class="k">if</span> <span class="n">failed</span><span class="p">:</span>
-</span><span data-line="374">        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-</span><span data-line="375">            <span class="sa">f</span><span class="s2">"Could not fetch details for </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">failed</span><span class="p">)</span><span class="si">}</span><span class="s2"> project(s): "</span>
-</span><span data-line="376">            <span class="o">+</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">failed</span><span class="p">[:</span><span class="mi">5</span><span class="p">])</span>
-</span><span data-line="377">            <span class="o">+</span> <span class="p">(</span><span class="s2">" ..."</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">failed</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">5</span> <span class="k">else</span> <span class="s2">""</span><span class="p">)</span>
-</span><span data-line="378">        <span class="p">)</span>
-</span><span data-line="379">    <span class="k">return</span> <span class="n">projects_info</span>
-</span><span data-line="380">
-</span><span data-line="381">
+</span><span data-line="357"><span class="k">def</span><span class="w"> </span><span class="nf">_add_details</span><span class="p">(</span><span class="n">projects_info</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">project_json</span><span class="p">,</span> <span class="n">max_workers</span><span class="p">):</span>
+</span><span data-line="358"><span class="w">    </span><span class="sd">"""Add the ``_project_details`` keys to each record, fetching concurrently.</span>
+</span><span data-line="359">
+</span><span data-line="360"><span class="sd">    A project whose JSON cannot be fetched is left without the detail keys (with a</span>
+</span><span data-line="361"><span class="sd">    warning), rather than failing the whole listing. Leaving them out, instead of</span>
+</span><span data-line="362"><span class="sd">    setting them to ``None``, keeps a failed fetch distinguishable from a project</span>
+</span><span data-line="363"><span class="sd">    that has no summary or release, so a cached listing is refetched for details.</span>
+</span><span data-line="364"><span class="sd">    """</span>
+</span><span data-line="365">    <span class="kn">from</span><span class="w"> </span><span class="nn">concurrent.futures</span><span class="w"> </span><span class="kn">import</span> <span class="n">ThreadPoolExecutor</span>
+</span><span data-line="366">
+</span><span data-line="367">    <span class="k">def</span><span class="w"> </span><span class="nf">details</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+</span><span data-line="368">        <span class="k">try</span><span class="p">:</span>
+</span><span data-line="369">            <span class="k">return</span> <span class="n">_project_details</span><span class="p">(</span><span class="n">project_json</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+</span><span data-line="370">        <span class="k">except</span> <span class="n">RequestException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span data-line="371">            <span class="n">failed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+</span><span data-line="372">            <span class="k">return</span> <span class="p">{}</span>
+</span><span data-line="373">
+</span><span data-line="374">    <span class="n">failed</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span data-line="375">    <span class="k">with</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="n">max_workers</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
+</span><span data-line="376">        <span class="n">all_details</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">details</span><span class="p">,</span> <span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">projects_info</span><span class="p">])</span>
+</span><span data-line="377">        <span class="n">projects_info</span> <span class="o">=</span> <span class="p">[{</span><span class="o">**</span><span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">x</span><span class="p">}</span> <span class="k">for</span> <span class="n">d</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">projects_info</span><span class="p">,</span> <span class="n">all_details</span><span class="p">)]</span>
+</span><span data-line="378">    <span class="k">if</span> <span class="n">failed</span><span class="p">:</span>
+</span><span data-line="379">        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+</span><span data-line="380">            <span class="sa">f</span><span class="s2">"Could not fetch details for </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">failed</span><span class="p">)</span><span class="si">}</span><span class="s2"> project(s): "</span>
+</span><span data-line="381">            <span class="o">+</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">failed</span><span class="p">[:</span><span class="mi">5</span><span class="p">])</span>
+</span><span data-line="382">            <span class="o">+</span> <span class="p">(</span><span class="s2">" ..."</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">failed</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">5</span> <span class="k">else</span> <span class="s2">""</span><span class="p">)</span>
+</span><span data-line="383">        <span class="p">)</span>
+</span><span data-line="384">    <span class="k">return</span> <span class="n">projects_info</span>
+</span><span data-line="385">
+</span><span data-line="386">
 <div class="viewcode-block" id="slurp_user_projects_info">
 <a class="viewcode-back" href="../../_autosummary/yp.base.html#yp.base.slurp_user_projects_info">[docs]</a>
-</span><span data-line="382"><span class="k">def</span><span class="w"> </span><span class="nf">slurp_user_projects_info</span><span class="p">(</span>
-</span><span data-line="383">    <span class="n">user</span><span class="p">,</span>
-</span><span data-line="384">    <span class="o">*</span><span class="p">,</span>
-</span><span data-line="385">    <span class="n">with_details</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-</span><span data-line="386">    <span class="n">cache_results</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span data-line="387">    <span class="n">refresh</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-</span><span data-line="388">    <span class="n">user_packages</span><span class="o">=</span><span class="n">xmlrpc_user_packages</span><span class="p">,</span>
-</span><span data-line="389">    <span class="n">project_json</span><span class="o">=</span><span class="n">pypi_project_json</span><span class="p">,</span>
-</span><span data-line="390">    <span class="n">max_workers</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
-</span><span data-line="391"><span class="p">):</span>
-</span><span data-line="392"><span class="w">    </span><span class="sd">"""</span>
-</span><span data-line="393"><span class="sd">    The list of projects that ``user`` owns or maintains on PyPI.</span>
-</span><span data-line="394">
-</span><span data-line="395"><span class="sd">    Each record has ``name``, ``href`` (the project's PyPI page) and ``role``</span>
-</span><span data-line="396"><span class="sd">    (``'owner'`` or ``'maintainer'``). With ``with_details=True`` it also has</span>
-</span><span data-line="397"><span class="sd">    ``description`` (the summary), ``version`` and ``date`` (upload time of the</span>
-</span><span data-line="398"><span class="sd">    last release), fetched concurrently from the JSON API: one request per project,</span>
-</span><span data-line="399"><span class="sd">    so expect some seconds for an account with hundreds of projects.</span>
-</span><span data-line="400">
-</span><span data-line="401"><span class="sd">    If ``cache_results`` is True (the default), results are cached on disk, in</span>
-</span><span data-line="402"><span class="sd">    ``slurp_user_projects_info.user_projects_info_cache_folder``.</span>
-</span><span data-line="403"><span class="sd">    If ``refresh`` is True, the cache is refreshed.</span>
-</span><span data-line="404"><span class="sd">    A cache written without details is refetched when details are asked for.</span>
+</span><span data-line="387"><span class="k">def</span><span class="w"> </span><span class="nf">slurp_user_projects_info</span><span class="p">(</span>
+</span><span data-line="388">    <span class="n">user</span><span class="p">,</span>
+</span><span data-line="389">    <span class="o">*</span><span class="p">,</span>
+</span><span data-line="390">    <span class="n">with_details</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span data-line="391">    <span class="n">cache_results</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span data-line="392">    <span class="n">refresh</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span data-line="393">    <span class="n">user_packages</span><span class="o">=</span><span class="n">xmlrpc_user_packages</span><span class="p">,</span>
+</span><span data-line="394">    <span class="n">project_json</span><span class="o">=</span><span class="n">pypi_project_json</span><span class="p">,</span>
+</span><span data-line="395">    <span class="n">max_workers</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+</span><span data-line="396"><span class="p">):</span>
+</span><span data-line="397"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="398"><span class="sd">    The list of projects that ``user`` owns or maintains on PyPI.</span>
+</span><span data-line="399">
+</span><span data-line="400"><span class="sd">    Each record has ``name``, ``href`` (the project's PyPI page) and ``role``</span>
+</span><span data-line="401"><span class="sd">    (``'owner'`` or ``'maintainer'``). With ``with_details=True`` it also has</span>
+</span><span data-line="402"><span class="sd">    ``description`` (the summary), ``version`` and ``date`` (upload time of the</span>
+</span><span data-line="403"><span class="sd">    last release), fetched concurrently from the JSON API: one request per project,</span>
+</span><span data-line="404"><span class="sd">    so expect some seconds for an account with hundreds of projects.</span>
 </span><span data-line="405">
-</span><span data-line="406"><span class="sd">    ``user_packages`` (``user -&gt; [(role, name), ...]``) and ``project_json``</span>
-</span><span data-line="407"><span class="sd">    (``name -&gt; dict``) are the transports; the defaults call PyPI.</span>
-</span><span data-line="408">
-</span><span data-line="409"><span class="sd">    &gt;&gt;&gt; infos = slurp_user_projects_info('thorwhalen1')  # doctest: +SKIP</span>
-</span><span data-line="410"><span class="sd">    &gt;&gt;&gt; sorted(infos[0])  # doctest: +SKIP</span>
-</span><span data-line="411"><span class="sd">    ['href', 'name', 'role']</span>
-</span><span data-line="412"><span class="sd">    """</span>
-</span><span data-line="413">    <span class="n">cache_file</span> <span class="o">=</span> <span class="n">user_projects_info_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">user</span><span class="si">}</span><span class="s2">.json"</span>
+</span><span data-line="406"><span class="sd">    If ``cache_results`` is True (the default), results are cached on disk, in</span>
+</span><span data-line="407"><span class="sd">    ``slurp_user_projects_info.user_projects_info_cache_folder``.</span>
+</span><span data-line="408"><span class="sd">    If ``refresh`` is True, the cache is refreshed.</span>
+</span><span data-line="409"><span class="sd">    A cache is refetched when details are asked for and any of its records lacks</span>
+</span><span data-line="410"><span class="sd">    them: written without details, by an older version, or after a failed fetch.</span>
+</span><span data-line="411">
+</span><span data-line="412"><span class="sd">    ``user_packages`` (``user -&gt; [(role, name), ...]``) and ``project_json``</span>
+</span><span data-line="413"><span class="sd">    (``name -&gt; dict``) are the transports; the defaults call PyPI.</span>
 </span><span data-line="414">
-</span><span data-line="415">    <span class="k">if</span> <span class="n">cache_results</span> <span class="ow">and</span> <span class="n">cache_file</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">refresh</span><span class="p">:</span>
-</span><span data-line="416">        <span class="n">cached</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">cache_file</span><span class="o">.</span><span class="n">read_text</span><span class="p">())</span>
-</span><span data-line="417">        <span class="k">if</span> <span class="ow">not</span> <span class="n">with_details</span> <span class="ow">or</span> <span class="nb">all</span><span class="p">(</span><span class="s2">"date"</span> <span class="ow">in</span> <span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">cached</span><span class="p">):</span>
-</span><span data-line="418">            <span class="k">return</span> <span class="n">cached</span>
-</span><span data-line="419">
-</span><span data-line="420">    <span class="n">projects_info</span> <span class="o">=</span> <span class="p">[</span>
-</span><span data-line="421">        <span class="p">{</span>
-</span><span data-line="422">            <span class="s2">"name"</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
-</span><span data-line="423">            <span class="s2">"href"</span><span class="p">:</span> <span class="n">pypi_project_furl</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">),</span>
-</span><span data-line="424">            <span class="s2">"role"</span><span class="p">:</span> <span class="n">role</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>
-</span><span data-line="425">        <span class="p">}</span>
-</span><span data-line="426">        <span class="k">for</span> <span class="n">role</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">user_packages</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
-</span><span data-line="427">    <span class="p">]</span>
-</span><span data-line="428">    <span class="k">if</span> <span class="n">with_details</span><span class="p">:</span>
-</span><span data-line="429">        <span class="n">projects_info</span> <span class="o">=</span> <span class="n">_add_details</span><span class="p">(</span>
-</span><span data-line="430">            <span class="n">projects_info</span><span class="p">,</span> <span class="n">project_json</span><span class="o">=</span><span class="n">project_json</span><span class="p">,</span> <span class="n">max_workers</span><span class="o">=</span><span class="n">max_workers</span>
-</span><span data-line="431">        <span class="p">)</span>
-</span><span data-line="432">
-</span><span data-line="433">    <span class="k">if</span> <span class="n">cache_results</span><span class="p">:</span>
-</span><span data-line="434">        <span class="n">cache_file</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span data-line="435">        <span class="n">cache_file</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">projects_info</span><span class="p">))</span>
-</span><span data-line="436">
-</span><span data-line="437">    <span class="k">return</span> <span class="n">projects_info</span></div>
-
+</span><span data-line="415"><span class="sd">    &gt;&gt;&gt; infos = slurp_user_projects_info('thorwhalen1')  # doctest: +SKIP</span>
+</span><span data-line="416"><span class="sd">    &gt;&gt;&gt; sorted(infos[0])  # doctest: +SKIP</span>
+</span><span data-line="417"><span class="sd">    ['href', 'name', 'role']</span>
+</span><span data-line="418"><span class="sd">    """</span>
+</span><span data-line="419">    <span class="n">cache_file</span> <span class="o">=</span> <span class="n">user_projects_info_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">user</span><span class="si">}</span><span class="s2">.json"</span>
+</span><span data-line="420">
+</span><span data-line="421">    <span class="k">if</span> <span class="n">cache_results</span> <span class="ow">and</span> <span class="n">cache_file</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">refresh</span><span class="p">:</span>
+</span><span data-line="422">        <span class="n">cached</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">cache_file</span><span class="o">.</span><span class="n">read_text</span><span class="p">())</span>
+</span><span data-line="423">        <span class="k">if</span> <span class="ow">not</span> <span class="n">with_details</span> <span class="ow">or</span> <span class="nb">all</span><span class="p">(</span><span class="n">_DETAIL_KEYS</span> <span class="o">&lt;=</span> <span class="n">d</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">cached</span><span class="p">):</span>
+</span><span data-line="424">            <span class="k">return</span> <span class="n">cached</span>
+</span><span data-line="425">
+</span><span data-line="426">    <span class="n">projects_info</span> <span class="o">=</span> <span class="p">[</span>
+</span><span data-line="427">        <span class="p">{</span>
+</span><span data-line="428">            <span class="s2">"name"</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+</span><span data-line="429">            <span class="s2">"href"</span><span class="p">:</span> <span class="n">pypi_project_furl</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">),</span>
+</span><span data-line="430">            <span class="s2">"role"</span><span class="p">:</span> <span class="n">role</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>
+</span><span data-line="431">        <span class="p">}</span>
+</span><span data-line="432">        <span class="k">for</span> <span class="n">role</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">user_packages</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+</span><span data-line="433">    <span class="p">]</span>
+</span><span data-line="434">    <span class="k">if</span> <span class="n">with_details</span><span class="p">:</span>
+</span><span data-line="435">        <span class="n">projects_info</span> <span class="o">=</span> <span class="n">_add_details</span><span class="p">(</span>
+</span><span data-line="436">            <span class="n">projects_info</span><span class="p">,</span> <span class="n">project_json</span><span class="o">=</span><span class="n">project_json</span><span class="p">,</span> <span class="n">max_workers</span><span class="o">=</span><span class="n">max_workers</span>
+</span><span data-line="437">        <span class="p">)</span>
 </span><span data-line="438">
-</span><span data-line="439">
-</span><span data-line="440"><span class="n">slurp_user_projects_info</span><span class="o">.</span><span class="n">user_projects_info_cache_folder</span> <span class="o">=</span> <span class="n">user_projects_info_path</span>
-</span><span data-line="441">
+</span><span data-line="439">    <span class="k">if</span> <span class="n">cache_results</span><span class="p">:</span>
+</span><span data-line="440">        <span class="n">cache_file</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span data-line="441">        <span class="n">cache_file</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">projects_info</span><span class="p">))</span>
 </span><span data-line="442">
+</span><span data-line="443">    <span class="k">return</span> <span class="n">projects_info</span></div>
+
+</span><span data-line="444">
+</span><span data-line="445">
+</span><span data-line="446"><span class="n">slurp_user_projects_info</span><span class="o">.</span><span class="n">user_projects_info_cache_folder</span> <span class="o">=</span> <span class="n">user_projects_info_path</span>
+</span><span data-line="447">
+</span><span data-line="448">
 <div class="viewcode-block" id="get_updated_pkg_name_stub">
 <a class="viewcode-back" href="../../_autosummary/yp.base.html#yp.base.get_updated_pkg_name_stub">[docs]</a>
-</span><span data-line="443"><span class="k">def</span><span class="w"> </span><span class="nf">get_updated_pkg_name_stub</span><span class="p">():</span>
-</span><span data-line="444"><span class="w">    </span><span class="sd">"""</span>
-</span><span data-line="445"><span class="sd">    Get ``{pkg_name: pkg_stub}`` data from pypi</span>
-</span><span data-line="446"><span class="sd">    :return: ``{pkg_name: pkg_stub, ...}`` dict</span>
-</span><span data-line="447"><span class="sd">    """</span>
-</span><span data-line="448">    <span class="n">r</span> <span class="o">=</span> <span class="n">request_saving_failure_responses</span><span class="p">(</span><span class="s2">"get"</span><span class="p">,</span> <span class="n">pkg_list_url</span><span class="p">)</span>
-</span><span data-line="449">    <span class="n">t</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(),</span> <span class="n">features</span><span class="o">=</span><span class="s2">"lxml"</span><span class="p">)</span>
-</span><span data-line="450">    <span class="k">return</span> <span class="p">{</span>
-</span><span data-line="451">        <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">contents</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="n">pkg_name_re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"href"</span><span class="p">))</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-</span><span data-line="452">        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">gen_find</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="s2">"a"</span><span class="p">)</span>
-</span><span data-line="453">    <span class="p">}</span></div>
+</span><span data-line="449"><span class="k">def</span><span class="w"> </span><span class="nf">get_updated_pkg_name_stub</span><span class="p">():</span>
+</span><span data-line="450"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="451"><span class="sd">    Get ``{pkg_name: pkg_stub}`` data from pypi</span>
+</span><span data-line="452"><span class="sd">    :return: ``{pkg_name: pkg_stub, ...}`` dict</span>
+</span><span data-line="453"><span class="sd">    """</span>
+</span><span data-line="454">    <span class="n">r</span> <span class="o">=</span> <span class="n">request_saving_failure_responses</span><span class="p">(</span><span class="s2">"get"</span><span class="p">,</span> <span class="n">pkg_list_url</span><span class="p">)</span>
+</span><span data-line="455">    <span class="n">t</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">(),</span> <span class="n">features</span><span class="o">=</span><span class="s2">"lxml"</span><span class="p">)</span>
+</span><span data-line="456">    <span class="k">return</span> <span class="p">{</span>
+</span><span data-line="457">        <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">contents</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="n">pkg_name_re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"href"</span><span class="p">))</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span data-line="458">        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">gen_find</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="s2">"a"</span><span class="p">)</span>
+</span><span data-line="459">    <span class="p">}</span></div>
 
-</span><span data-line="454">
-</span><span data-line="455">
+</span><span data-line="460">
+</span><span data-line="461">
 <div class="viewcode-block" id="refresh_saved_pkg_name_stub">
 <a class="viewcode-back" href="../../_autosummary/yp.base.html#yp.base.refresh_saved_pkg_name_stub">[docs]</a>
-</span><span data-line="456"><span class="k">def</span><span class="w"> </span><span class="nf">refresh_saved_pkg_name_stub</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">save_to</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">write_text_file</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-</span><span data-line="457"><span class="w">    </span><span class="sd">"""</span>
-</span><span data-line="458"><span class="sd">    Update the ``{pkg_name: pkg_stub}`` stored data with a fresh call to</span>
-</span><span data-line="459"><span class="sd">    ``get_updated_pkg_name_stub``.</span>
-</span><span data-line="460">
-</span><span data-line="461"><span class="sd">    The refreshed copy is written to the user's app folder by default, not into the</span>
-</span><span data-line="462"><span class="sd">    installed package, which is read-only in many installs.</span>
-</span><span data-line="463">
-</span><span data-line="464"><span class="sd">    :param save_to: Where to write the gzipped TSV cache.</span>
-</span><span data-line="465"><span class="sd">        Defaults to ``pkg_names_user_filepath``.</span>
-</span><span data-line="466"><span class="sd">    :param write_text_file: Also write a plain ``pkg_list.txt`` of the names, one per</span>
-</span><span data-line="467"><span class="sd">        line, alongside ``save_to``.</span>
-</span><span data-line="468"><span class="sd">    """</span>
-</span><span data-line="469">    <span class="n">save_to</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">save_to</span><span class="p">)</span> <span class="k">if</span> <span class="n">save_to</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">pkg_names_user_filepath</span>
-</span><span data-line="470">    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pkg_name_stub</span><span class="p">)</span> <span class="k">if</span> <span class="n">pkg_name_stub</span><span class="o">.</span><span class="n">is_loaded</span> <span class="k">else</span> <span class="mi">0</span>
-</span><span data-line="471">
-</span><span data-line="472">    <span class="n">fresh</span> <span class="o">=</span> <span class="n">get_updated_pkg_name_stub</span><span class="p">()</span>
-</span><span data-line="473">    <span class="n">save_to</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span data-line="474">    <span class="n">save_to</span><span class="o">.</span><span class="n">write_bytes</span><span class="p">(</span><span class="n">_encode_pkg_name_stub</span><span class="p">(</span><span class="n">fresh</span><span class="p">))</span>
-</span><span data-line="475">    <span class="k">if</span> <span class="n">write_text_file</span><span class="p">:</span>
-</span><span data-line="476">        <span class="p">(</span><span class="n">save_to</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">"pkg_list.txt"</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fresh</span><span class="p">))</span>
-</span><span data-line="477">    <span class="n">pkg_name_stub</span><span class="o">.</span><span class="n">update_cache</span><span class="p">(</span><span class="n">fresh</span><span class="p">)</span>
-</span><span data-line="478">
-</span><span data-line="479">    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-</span><span data-line="480">        <span class="nb">print</span><span class="p">(</span>
-</span><span data-line="481">            <span class="sa">f</span><span class="s2">"Updated the pkg_name_stub. Had </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> items; now has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">fresh</span><span class="p">)</span><span class="si">}</span><span class="s2">."</span>
-</span><span data-line="482">            <span class="sa">f</span><span class="s2">" The data is saved here: </span><span class="si">{</span><span class="n">save_to</span><span class="si">}</span><span class="s2">"</span>
-</span><span data-line="483">        <span class="p">)</span></div>
-
+</span><span data-line="462"><span class="k">def</span><span class="w"> </span><span class="nf">refresh_saved_pkg_name_stub</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">save_to</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">write_text_file</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+</span><span data-line="463"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="464"><span class="sd">    Update the ``{pkg_name: pkg_stub}`` stored data with a fresh call to</span>
+</span><span data-line="465"><span class="sd">    ``get_updated_pkg_name_stub``.</span>
+</span><span data-line="466">
+</span><span data-line="467"><span class="sd">    The refreshed copy is written to the user's app folder by default, not into the</span>
+</span><span data-line="468"><span class="sd">    installed package, which is read-only in many installs.</span>
+</span><span data-line="469">
+</span><span data-line="470"><span class="sd">    :param save_to: Where to write the gzipped TSV cache.</span>
+</span><span data-line="471"><span class="sd">        Defaults to ``pkg_names_user_filepath``.</span>
+</span><span data-line="472"><span class="sd">    :param write_text_file: Also write a plain ``pkg_list.txt`` of the names, one per</span>
+</span><span data-line="473"><span class="sd">        line, alongside ``save_to``.</span>
+</span><span data-line="474"><span class="sd">    """</span>
+</span><span data-line="475">    <span class="n">save_to</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">save_to</span><span class="p">)</span> <span class="k">if</span> <span class="n">save_to</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">pkg_names_user_filepath</span>
+</span><span data-line="476">    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pkg_name_stub</span><span class="p">)</span> <span class="k">if</span> <span class="n">pkg_name_stub</span><span class="o">.</span><span class="n">is_loaded</span> <span class="k">else</span> <span class="mi">0</span>
+</span><span data-line="477">
+</span><span data-line="478">    <span class="n">fresh</span> <span class="o">=</span> <span class="n">get_updated_pkg_name_stub</span><span class="p">()</span>
+</span><span data-line="479">    <span class="n">save_to</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span data-line="480">    <span class="n">save_to</span><span class="o">.</span><span class="n">write_bytes</span><span class="p">(</span><span class="n">_encode_pkg_name_stub</span><span class="p">(</span><span class="n">fresh</span><span class="p">))</span>
+</span><span data-line="481">    <span class="k">if</span> <span class="n">write_text_file</span><span class="p">:</span>
+</span><span data-line="482">        <span class="p">(</span><span class="n">save_to</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">"pkg_list.txt"</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fresh</span><span class="p">))</span>
+</span><span data-line="483">    <span class="n">pkg_name_stub</span><span class="o">.</span><span class="n">update_cache</span><span class="p">(</span><span class="n">fresh</span><span class="p">)</span>
 </span><span data-line="484">
-</span><span data-line="485">
+</span><span data-line="485">    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+</span><span data-line="486">        <span class="nb">print</span><span class="p">(</span>
+</span><span data-line="487">            <span class="sa">f</span><span class="s2">"Updated the pkg_name_stub. Had </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> items; now has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">fresh</span><span class="p">)</span><span class="si">}</span><span class="s2">."</span>
+</span><span data-line="488">            <span class="sa">f</span><span class="s2">" The data is saved here: </span><span class="si">{</span><span class="n">save_to</span><span class="si">}</span><span class="s2">"</span>
+</span><span data-line="489">        <span class="p">)</span></div>
+
+</span><span data-line="490">
+</span><span data-line="491">
 <div class="viewcode-block" id="info_of_pkg_from_web">
 <a class="viewcode-back" href="../../_autosummary/yp.base.html#yp.base.info_of_pkg_from_web">[docs]</a>
-</span><span data-line="486"><span class="k">def</span><span class="w"> </span><span class="nf">info_of_pkg_from_web</span><span class="p">(</span><span class="n">pkg_name</span><span class="p">):</span>
-</span><span data-line="487"><span class="w">    </span><span class="sd">"""</span>
-</span><span data-line="488"><span class="sd">    Get dict of information for a pkg_name</span>
-</span><span data-line="489"><span class="sd">    :param pkg_name:</span>
-</span><span data-line="490"><span class="sd">    :return:</span>
-</span><span data-line="491"><span class="sd">    """</span>
-</span><span data-line="492">    <span class="n">r</span> <span class="o">=</span> <span class="n">request_saving_failure_responses</span><span class="p">(</span><span class="s2">"get"</span><span class="p">,</span> <span class="n">pkg_info_furl</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pkg_name</span><span class="o">=</span><span class="n">pkg_name</span><span class="p">))</span>
-</span><span data-line="493">    <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">()</span></div>
+</span><span data-line="492"><span class="k">def</span><span class="w"> </span><span class="nf">info_of_pkg_from_web</span><span class="p">(</span><span class="n">pkg_name</span><span class="p">):</span>
+</span><span data-line="493"><span class="w">    </span><span class="sd">"""</span>
+</span><span data-line="494"><span class="sd">    Get dict of information for a pkg_name</span>
+</span><span data-line="495"><span class="sd">    :param pkg_name:</span>
+</span><span data-line="496"><span class="sd">    :return:</span>
+</span><span data-line="497"><span class="sd">    """</span>
+</span><span data-line="498">    <span class="n">r</span> <span class="o">=</span> <span class="n">request_saving_failure_responses</span><span class="p">(</span><span class="s2">"get"</span><span class="p">,</span> <span class="n">pkg_info_furl</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pkg_name</span><span class="o">=</span><span class="n">pkg_name</span><span class="p">))</span>
+</span><span data-line="499">    <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">()</span></div>
 
-</span><span data-line="494">
-</span><span data-line="495">
-</span><span data-line="496"><span class="k">def</span><span class="w"> </span><span class="nf">_pkg_exists_on_pypi</span><span class="p">(</span><span class="n">pkg_name</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">pkg_existence_check_timeout</span><span class="p">):</span>
-</span><span data-line="497"><span class="w">    </span><span class="sd">"""Return True iff ``pkg_name`` exists on PyPI, using the authoritative</span>
-</span><span data-line="498"><span class="sd">    JSON API as the signal (200 =&gt; exists/taken, 404 =&gt; free).</span>
-</span><span data-line="499">
-</span><span data-line="500"><span class="sd">    A lightweight ``HEAD`` request is used (no payload downloaded). This is more</span>
-</span><span data-line="501"><span class="sd">    reliable than scraping the HTML ``/project/&lt;name&gt;`` page, which can return a</span>
-</span><span data-line="502"><span class="sd">    soft 200 for non-existent names in some network environments. PyPI</span>
-</span><span data-line="503"><span class="sd">    normalizes names per PEP 503, so separator/case variants of a taken name</span>
-</span><span data-line="504"><span class="sd">    (e.g. ``scikit_learn`` for ``scikit-learn``) also report ``True``.</span>
-</span><span data-line="505"><span class="sd">    """</span>
-</span><span data-line="506">    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span>
-</span><span data-line="507">        <span class="n">pkg_info_furl</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pkg_name</span><span class="o">=</span><span class="n">pkg_name</span><span class="p">),</span> <span class="n">allow_redirects</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span>
-</span><span data-line="508">    <span class="p">)</span>
-</span><span data-line="509">    <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>
-</span><span data-line="510">
-</span><span data-line="511">
-</span><span data-line="512"><span class="c1"># Utils #################################################################################</span>
-</span><span data-line="513">
-</span><span data-line="514">
-</span><span data-line="515"><span class="nd">@wraps</span><span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">request</span><span class="p">)</span>
-</span><span data-line="516"><span class="k">def</span><span class="w"> </span><span class="nf">request_saving_failure_responses</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</span><span data-line="517">    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</span><span data-line="518">    <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
-</span><span data-line="519">        <span class="k">return</span> <span class="n">r</span>
-</span><span data-line="520">    <span class="k">else</span><span class="p">:</span>
-</span><span data-line="521">        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Request came back with status_code: </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">"</span>
-</span><span data-line="522">        <span class="n">tmp_filepath</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mktemp</span><span class="p">()</span>
-</span><span data-line="523">        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_filepath</span><span class="p">,</span> <span class="s2">"wb"</span><span class="p">))</span>
-</span><span data-line="524">        <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"""</span><span class="se">\n</span><span class="s2">The response object was pickled in </span><span class="si">{</span><span class="n">tmp_filepath</span><span class="si">}</span><span class="s2">.</span>
-</span><span data-line="525"><span class="s2">        To get it do:</span>
-</span><span data-line="526"><span class="s2">        import pickle</span>
-</span><span data-line="527"><span class="s2">        r = pickle.load(open('</span><span class="si">{</span><span class="n">tmp_filepath</span><span class="si">}</span><span class="s2">', 'rb'))</span>
-</span><span data-line="528"><span class="s2">        """</span>
-</span><span data-line="529">        <span class="k">raise</span> <span class="n">RequestException</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</span><span data-line="530">
-</span><span data-line="531">
+</span><span data-line="500">
+</span><span data-line="501">
+</span><span data-line="502"><span class="k">def</span><span class="w"> </span><span class="nf">_pkg_exists_on_pypi</span><span class="p">(</span><span class="n">pkg_name</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">pkg_existence_check_timeout</span><span class="p">):</span>
+</span><span data-line="503"><span class="w">    </span><span class="sd">"""Return True iff ``pkg_name`` exists on PyPI, using the authoritative</span>
+</span><span data-line="504"><span class="sd">    JSON API as the signal (200 =&gt; exists/taken, 404 =&gt; free).</span>
+</span><span data-line="505">
+</span><span data-line="506"><span class="sd">    A lightweight ``HEAD`` request is used (no payload downloaded). This is more</span>
+</span><span data-line="507"><span class="sd">    reliable than scraping the HTML ``/project/&lt;name&gt;`` page, which can return a</span>
+</span><span data-line="508"><span class="sd">    soft 200 for non-existent names in some network environments. PyPI</span>
+</span><span data-line="509"><span class="sd">    normalizes names per PEP 503, so separator/case variants of a taken name</span>
+</span><span data-line="510"><span class="sd">    (e.g. ``scikit_learn`` for ``scikit-learn``) also report ``True``.</span>
+</span><span data-line="511"><span class="sd">    """</span>
+</span><span data-line="512">    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span>
+</span><span data-line="513">        <span class="n">pkg_info_furl</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pkg_name</span><span class="o">=</span><span class="n">pkg_name</span><span class="p">),</span> <span class="n">allow_redirects</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span>
+</span><span data-line="514">    <span class="p">)</span>
+</span><span data-line="515">    <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>
+</span><span data-line="516">
+</span><span data-line="517">
+</span><span data-line="518"><span class="c1"># Utils #################################################################################</span>
+</span><span data-line="519">
+</span><span data-line="520">
+</span><span data-line="521"><span class="nd">@wraps</span><span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">request</span><span class="p">)</span>
+</span><span data-line="522"><span class="k">def</span><span class="w"> </span><span class="nf">request_saving_failure_responses</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span data-line="523">    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span data-line="524">    <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+</span><span data-line="525">        <span class="k">return</span> <span class="n">r</span>
+</span><span data-line="526">    <span class="k">else</span><span class="p">:</span>
+</span><span data-line="527">        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Request came back with status_code: </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">"</span>
+</span><span data-line="528">        <span class="n">tmp_filepath</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mktemp</span><span class="p">()</span>
+</span><span data-line="529">        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_filepath</span><span class="p">,</span> <span class="s2">"wb"</span><span class="p">))</span>
+</span><span data-line="530">        <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"""</span><span class="se">\n</span><span class="s2">The response object was pickled in </span><span class="si">{</span><span class="n">tmp_filepath</span><span class="si">}</span><span class="s2">.</span>
+</span><span data-line="531"><span class="s2">        To get it do:</span>
+</span><span data-line="532"><span class="s2">        import pickle</span>
+</span><span data-line="533"><span class="s2">        r = pickle.load(open('</span><span class="si">{</span><span class="n">tmp_filepath</span><span class="si">}</span><span class="s2">', 'rb'))</span>
+</span><span data-line="534"><span class="s2">        """</span>
+</span><span data-line="535">        <span class="k">raise</span> <span class="n">RequestException</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span data-line="536">
+</span><span data-line="537">
 <div class="viewcode-block" id="return_sentinel_on_exception">
 <a class="viewcode-back" href="../../_autosummary/yp.base.html#yp.base.return_sentinel_on_exception">[docs]</a>
-</span><span data-line="532"><span class="k">def</span><span class="w"> </span><span class="nf">return_sentinel_on_exception</span><span class="p">(</span><span class="n">caught_exceptions</span><span class="o">=</span><span class="p">(</span><span class="ne">Exception</span><span class="p">,),</span> <span class="nb">sentinel</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span data-line="533"><span class="w">    </span><span class="sd">"""Decorates a function so it will return a sentinel (default None) instead of</span>
-</span><span data-line="534"><span class="sd">    raising an exception"""</span>
-</span><span data-line="535">
-</span><span data-line="536">    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-</span><span data-line="537">        <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-</span><span data-line="538">        <span class="k">def</span><span class="w"> </span><span class="nf">wrapped</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</span><span data-line="539">            <span class="k">try</span><span class="p">:</span>
-</span><span data-line="540">                <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</span><span data-line="541">            <span class="k">except</span> <span class="n">caught_exceptions</span><span class="p">:</span>
-</span><span data-line="542">                <span class="k">return</span> <span class="nb">sentinel</span>
-</span><span data-line="543">            <span class="k">return</span> <span class="n">wrapped</span>
-</span><span data-line="544">
-</span><span data-line="545">    <span class="k">return</span> <span class="n">decorator</span></div>
+</span><span data-line="538"><span class="k">def</span><span class="w"> </span><span class="nf">return_sentinel_on_exception</span><span class="p">(</span><span class="n">caught_exceptions</span><span class="o">=</span><span class="p">(</span><span class="ne">Exception</span><span class="p">,),</span> <span class="nb">sentinel</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span data-line="539"><span class="w">    </span><span class="sd">"""Decorates a function so it will return a sentinel (default None) instead of</span>
+</span><span data-line="540"><span class="sd">    raising an exception"""</span>
+</span><span data-line="541">
+</span><span data-line="542">    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+</span><span data-line="543">        <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+</span><span data-line="544">        <span class="k">def</span><span class="w"> </span><span class="nf">wrapped</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span data-line="545">            <span class="k">try</span><span class="p">:</span>
+</span><span data-line="546">                <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span data-line="547">            <span class="k">except</span> <span class="n">caught_exceptions</span><span class="p">:</span>
+</span><span data-line="548">                <span class="k">return</span> <span class="nb">sentinel</span>
+</span><span data-line="549">            <span class="k">return</span> <span class="n">wrapped</span>
+</span><span data-line="550">
+</span><span data-line="551">    <span class="k">return</span> <span class="n">decorator</span></div>
 
-</span><span data-line="546">
-</span><span data-line="547">
-</span><span data-line="548"><span class="nd">@wraps</span><span class="p">(</span>
-</span><span data-line="549">    <span class="n">BeautifulSoup</span><span class="o">.</span><span class="n">find_all</span><span class="p">,</span>
-</span><span data-line="550">    <span class="n">assigned</span><span class="o">=</span><span class="p">(</span><span class="s2">"__module__"</span><span class="p">,</span> <span class="s2">"__qualname__"</span><span class="p">,</span> <span class="s2">"__annotations__"</span><span class="p">,</span> <span class="s2">"__name__"</span><span class="p">),</span>
-</span><span data-line="551"><span class="p">)</span>
-</span><span data-line="552"><span class="k">def</span><span class="w"> </span><span class="nf">gen_find</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</span><span data-line="553"><span class="w">    </span><span class="sd">"""Does what BeautifulSoup.find_all does, but as an iterator.</span>
-</span><span data-line="554"><span class="sd">    See find_all documentation for more information."""</span>
-</span><span data-line="555">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span data-line="556">        <span class="n">tag</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">features</span><span class="o">=</span><span class="s2">"lxml"</span><span class="p">)</span>
-</span><span data-line="557">    <span class="n">next_tag</span> <span class="o">=</span> <span class="n">tag</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</span><span data-line="558">    <span class="k">while</span> <span class="n">next_tag</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="559">        <span class="k">yield</span> <span class="n">next_tag</span>
-</span><span data-line="560">        <span class="n">next_tag</span> <span class="o">=</span> <span class="n">next_tag</span><span class="o">.</span><span class="n">find_next</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span data-line="552">
+</span><span data-line="553">
+</span><span data-line="554"><span class="nd">@wraps</span><span class="p">(</span>
+</span><span data-line="555">    <span class="n">BeautifulSoup</span><span class="o">.</span><span class="n">find_all</span><span class="p">,</span>
+</span><span data-line="556">    <span class="n">assigned</span><span class="o">=</span><span class="p">(</span><span class="s2">"__module__"</span><span class="p">,</span> <span class="s2">"__qualname__"</span><span class="p">,</span> <span class="s2">"__annotations__"</span><span class="p">,</span> <span class="s2">"__name__"</span><span class="p">),</span>
+</span><span data-line="557"><span class="p">)</span>
+</span><span data-line="558"><span class="k">def</span><span class="w"> </span><span class="nf">gen_find</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span data-line="559"><span class="w">    </span><span class="sd">"""Does what BeautifulSoup.find_all does, but as an iterator.</span>
+</span><span data-line="560"><span class="sd">    See find_all documentation for more information."""</span>
+</span><span data-line="561">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span data-line="562">        <span class="n">tag</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">features</span><span class="o">=</span><span class="s2">"lxml"</span><span class="p">)</span>
+</span><span data-line="563">    <span class="n">next_tag</span> <span class="o">=</span> <span class="n">tag</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span data-line="564">    <span class="k">while</span> <span class="n">next_tag</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="565">        <span class="k">yield</span> <span class="n">next_tag</span>
+</span><span data-line="566">        <span class="n">next_tag</span> <span class="o">=</span> <span class="n">next_tag</span><span class="o">.</span><span class="n">find_next</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </span></pre></div>
         </article><button class="back-to-top" type="button">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -746,7 +752,7 @@ data-aria-dark="Switch to auto color mode">
     </div>
   </div>
 </footer>
-      <script src="../../_static/documentation_options.js?v=9fc46840"></script>
+      <script src="../../_static/documentation_options.js?v=544df88d"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>

@@ -1,38 +1,38 @@
 {
   "schema_version": 1,
-  "built_at": "2026-11-11T13:41:04Z",
+  "built_at": "2026-11-22T12:49:41Z",
   "package": {
     "name": "yp",
-    "version": "0.0.13",
+    "version": "0.0.14",
     "display_name": "yp",
     "source": "setup.cfg"
   },
   "git": {
     "available": true,
-    "commit": "c74a90ae5399478f40e24450852fa5788f4f150b",
-    "short_commit": "c74a90a",
+    "commit": "584e979c4c6554f0fc5a36e29f5906564be66fd4",
+    "short_commit": "584e979",
     "branch": "master",
     "tags": [
-      "0.0.13"
+      "0.0.14"
     ],
     "dirty": false,
     "remote_url": "https://github.com/thorwhalen/yp",
-    "commit_url": "https://github.com/thorwhalen/yp/commit/c74a90ae5399478f40e24450852fa5788f4f150b",
+    "commit_url": "https://github.com/thorwhalen/yp/commit/584e979c4c6554f0fc5a36e29f5906564be66fd4",
     "error": null
   },
   "ci": {
     "provider": "github",
     "repository": "thorwhalen/yp",
-    "sha": "238f5571f78c7e1cbc8fd0c80710a7ab00a6b26c",
+    "sha": "992b07f2d5062c3bb6b1814498c40bd0d82fd6cd",
     "sha_in_history": true,
     "ref": "refs/heads/master",
     "ref_name": "master",
-    "run_id": "43031084406",
-    "run_url": "https://github.com/thorwhalen/yp/actions/runs/43031084406",
+    "run_id": "45024143169",
+    "run_url": "https://github.com/thorwhalen/yp/actions/runs/45024143169",
     "server_url": "https://github.com"
   },
   "tools": {
-    "epythet": "0.2.22",
+    "epythet": "0.2.23",
     "sphinx": "9.1.1",
     "docutils": "0.22.4",
     "python": "3.12.16"
@@ -63,13 +63,15 @@
   "pypi": {
     "checked": true,
     "latest": "0.0.13",
-    "relation": "same",
+    "relation": "ahead",
     "error": null
   },
-  "reproduce": "git clone https://github.com/thorwhalen/yp && cd yp\ngit checkout c74a90ae5399478f40e24450852fa5788f4f150b\npip install \"epythet==0.2.22\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/thorwhalen/yp && cd yp\ngit checkout 584e979c4c6554f0fc5a36e29f5906564be66fd4\npip install \"epythet==0.2.23\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
-    "aligned": true,
-    "notes": []
+    "aligned": false,
+    "notes": [
+      "The documented version (0.0.14) is ahead of the latest release on PyPI (0.0.13): these docs describe unreleased code."
+    ]
   }
 }

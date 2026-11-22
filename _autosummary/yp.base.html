@@ -477,7 +477,8 @@ so expect some seconds for an account with hundreds of projects.</p>
 <p>If <code class="docutils literal notranslate"><span class="pre">cache_results</span></code> is True (the default), results are cached on disk, in
 <code class="docutils literal notranslate"><span class="pre">slurp_user_projects_info.user_projects_info_cache_folder</span></code>.
 If <code class="docutils literal notranslate"><span class="pre">refresh</span></code> is True, the cache is refreshed.
-A cache written without details is refetched when details are asked for.</p>
+A cache is refetched when details are asked for and any of its records lacks
+them: written without details, by an older version, or after a failed fetch.</p>
 <p><code class="docutils literal notranslate"><span class="pre">user_packages</span></code> (<code class="docutils literal notranslate"><span class="pre">user</span> <span class="pre">-&gt;</span> <span class="pre">[(role,</span> <span class="pre">name),</span> <span class="pre">...]</span></code>) and <code class="docutils literal notranslate"><span class="pre">project_json</span></code>
 (<code class="docutils literal notranslate"><span class="pre">name</span> <span class="pre">-&gt;</span> <span class="pre">dict</span></code>) are the transports; the defaults call PyPI.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="gp">&gt;&gt;&gt; </span><span class="n">infos</span> <span class="o">=</span> <span class="n">slurp_user_projects_info</span><span class="p">(</span><span class="s1">'thorwhalen1'</span><span class="p">)</span>
@@ -545,7 +546,7 @@ so it cannot be used.</p>
     </div>
   </div>
 </footer>
-      <script src="../_static/documentation_options.js?v=9fc46840"></script>
+      <script src="../_static/documentation_options.js?v=544df88d"></script>
       <script src="../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>

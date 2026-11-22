@@ -248,7 +248,8 @@ so expect some seconds for an account with hundreds of projects.
 If `cache_results` is True (the default), results are cached on disk, in
 `slurp_user_projects_info.user_projects_info_cache_folder`.
 If `refresh` is True, the cache is refreshed.
-A cache written without details is refetched when details are asked for.
+A cache is refetched when details are asked for and any of its records lacks
+them: written without details, by an older version, or after a failed fetch.
 
 `user_packages` (`user -> [(role, name), ...]`) and `project_json`
 (`name -> dict`) are the transports; the defaults call PyPI.
