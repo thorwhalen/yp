@@ -124,7 +124,9 @@ def test_legacy_cache_with_dates_only_is_refetched_for_details(cache_dir):
     import json
 
     (cache_dir / "someone.json").write_text(
-        json.dumps([{"name": "dol", "href": "h", "role": "owner", "date": "2025-01-01"}])
+        json.dumps(
+            [{"name": "dol", "href": "h", "role": "owner", "date": "2025-01-01"}]
+        )
     )
     calls = []
     infos = slurp_user_projects_info(
