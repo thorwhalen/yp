@@ -1,4 +1,4 @@
-> built 2026-11-22 19:18 UTC from 70ec217 (master) · yp 0.0.15. Details: build_info.json
+> built 2026-11-22 20:36 UTC from e797578 (master) · yp 0.0.15. Details: build_info.json
 
 # index.html.md
 
@@ -627,20 +627,18 @@ Utils for yp
 
 # About this build
 
-This documentation was built on **2026-11-22 19:18 UTC** from commit <a href="https://github.com/thorwhalen/yp/commit/70ec217cbcdd3b7dd611c966392fa6a4847a8248"><code>70ec217</code></a> on branch <code>master</code>, for **yp 0.0.15** (from <code>setup.cfg</code>).
+This documentation was built on **2026-11-22 20:36 UTC** from commit <a href="https://github.com/thorwhalen/yp/commit/e7975786fe534370aa6f3bea06c93b33403a79fe"><code>e797578</code></a> on branch <code>master</code>, for **yp 0.0.15** (from <code>pyproject.toml</code>).
 
-#### WARNING
-The documentation and the package may be misaligned:
-
-- The documented version (0.0.15) is ahead of the latest release on PyPI (0.0.14): these docs describe unreleased code.
+#### NOTE
+Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
 
 ## Source
 
 |                     |                                                                                                                                                      |
 |---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/thorwhalen/yp/commit/70ec217cbcdd3b7dd611c966392fa6a4847a8248"><code>70ec217cbcdd3b7dd611c966392fa6a4847a8248</code></a> |
+| Commit              | <a href="https://github.com/thorwhalen/yp/commit/e7975786fe534370aa6f3bea06c93b33403a79fe"><code>e7975786fe534370aa6f3bea06c93b33403a79fe</code></a> |
 | Branch              | <code>master</code>                                                                                                                                  |
-| Tags at this commit | <code>0.0.15</code>                                                                                                                                  |
+| Tags at this commit | none                                                                                                                                                 |
 | Working tree        | clean                                                                                                                                                |
 | Remote              | <code>https://github.com/thorwhalen/yp</code>                                                                                                        |
 
@@ -649,9 +647,9 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>thorwhalen/yp</code>                                                                 |
-| Run          | <a href="https://github.com/thorwhalen/yp/actions/runs/45059806241">45059806241</a>        |
+| Run          | <a href="https://github.com/thorwhalen/yp/actions/runs/45067249863">45067249863</a>        |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>9aab2790e7d438ec871c23a577d9e056733b1428</code> (in the history of the built commit) |
+| Event commit | <code>e7975786fe534370aa6f3bea06c93b33403a79fe</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -676,13 +674,13 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/yp/0.0.14/">0.0.14</a>, older than the documented version (0.0.15).
+Latest release: <a href="https://pypi.org/project/yp/0.0.15/">0.0.15</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/thorwhalen/yp && cd yp
-git checkout 70ec217cbcdd3b7dd611c966392fa6a4847a8248
+git checkout e7975786fe534370aa6f3bea06c93b33403a79fe
 pip install "epythet==0.2.23"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
