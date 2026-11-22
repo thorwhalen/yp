@@ -1,34 +1,34 @@
 {
   "schema_version": 1,
-  "built_at": "2026-11-22T12:49:41Z",
+  "built_at": "2026-11-22T19:18:11Z",
   "package": {
     "name": "yp",
-    "version": "0.0.14",
+    "version": "0.0.15",
     "display_name": "yp",
     "source": "setup.cfg"
   },
   "git": {
     "available": true,
-    "commit": "584e979c4c6554f0fc5a36e29f5906564be66fd4",
-    "short_commit": "584e979",
+    "commit": "70ec217cbcdd3b7dd611c966392fa6a4847a8248",
+    "short_commit": "70ec217",
     "branch": "master",
     "tags": [
-      "0.0.14"
+      "0.0.15"
     ],
     "dirty": false,
     "remote_url": "https://github.com/thorwhalen/yp",
-    "commit_url": "https://github.com/thorwhalen/yp/commit/584e979c4c6554f0fc5a36e29f5906564be66fd4",
+    "commit_url": "https://github.com/thorwhalen/yp/commit/70ec217cbcdd3b7dd611c966392fa6a4847a8248",
     "error": null
   },
   "ci": {
     "provider": "github",
     "repository": "thorwhalen/yp",
-    "sha": "992b07f2d5062c3bb6b1814498c40bd0d82fd6cd",
+    "sha": "9aab2790e7d438ec871c23a577d9e056733b1428",
     "sha_in_history": true,
     "ref": "refs/heads/master",
     "ref_name": "master",
-    "run_id": "45024143169",
-    "run_url": "https://github.com/thorwhalen/yp/actions/runs/45024143169",
+    "run_id": "45059806241",
+    "run_url": "https://github.com/thorwhalen/yp/actions/runs/45059806241",
     "server_url": "https://github.com"
   },
   "tools": {
@@ -62,16 +62,16 @@
   },
   "pypi": {
     "checked": true,
-    "latest": "0.0.13",
+    "latest": "0.0.14",
     "relation": "ahead",
     "error": null
   },
-  "reproduce": "git clone https://github.com/thorwhalen/yp && cd yp\ngit checkout 584e979c4c6554f0fc5a36e29f5906564be66fd4\npip install \"epythet==0.2.23\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/thorwhalen/yp && cd yp\ngit checkout 70ec217cbcdd3b7dd611c966392fa6a4847a8248\npip install \"epythet==0.2.23\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
     "aligned": false,
     "notes": [
-      "The documented version (0.0.14) is ahead of the latest release on PyPI (0.0.13): these docs describe unreleased code."
+      "The documented version (0.0.15) is ahead of the latest release on PyPI (0.0.14): these docs describe unreleased code."
     ]
   }
 }
