@@ -93,6 +93,50 @@ def test_cache_without_details_is_refetched_for_details(cache_dir):
     assert all("date" in d for d in infos)
 
 
+def test_failed_detail_fetch_is_not_cached_as_details(cache_dir):
+    from requests import RequestException
+
+    calls = []
+    fetch = _fake_user_packages(calls)
+
+    def flaky(name):
+        if name == "dol":
+            raise RequestException("boom")
+        return PROJECT_JSON[name]
+
+    with pytest.warns(UserWarning):
+        infos = slurp_user_projects_info(
+            "someone", with_details=True, user_packages=fetch, project_json=flaky
+        )
+    assert "date" not in infos[0]  # failed: no detail keys, not date=None
+    assert infos[1]["version"] == "0.1.0"
+    infos = slurp_user_projects_info(
+        "someone",
+        with_details=True,
+        user_packages=fetch,
+        project_json=PROJECT_JSON.__getitem__,
+    )
+    assert len(calls) == 2  # refetched, not served from the incomplete cache
+    assert infos[0]["date"] == "2026-10-01T10:00:05.000000Z"
+
+
+def test_legacy_cache_with_dates_only_is_refetched_for_details(cache_dir):
+    import json
+
+    (cache_dir / "someone.json").write_text(
+        json.dumps([{"name": "dol", "href": "h", "role": "owner", "date": "2025-01-01"}])
+    )
+    calls = []
+    infos = slurp_user_projects_info(
+        "someone",
+        with_details=True,
+        user_packages=_fake_user_packages(calls),
+        project_json=PROJECT_JSON.__getitem__,
+    )
+    assert len(calls) == 1
+    assert infos[0]["version"] == "0.3.1"
+
+
 def test_no_cache(cache_dir):
     slurp_user_projects_info(
         "someone", user_packages=_fake_user_packages([]), cache_results=False

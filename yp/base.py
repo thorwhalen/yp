@@ -337,6 +337,9 @@ def pypi_project_json(name: str, *, timeout: float = user_packages_timeout) -> d
     return r.json()
 
 
+_DETAIL_KEYS = frozenset(("description", "version", "date"))
+
+
 def _project_details(project_json: dict) -> dict:
     """``description``, ``version`` and ``date`` (of the last release) of a project."""
     info = project_json.get("info") or {}
@@ -354,8 +357,10 @@ def _project_details(project_json: dict) -> dict:
 def _add_details(projects_info, *, project_json, max_workers):
     """Add the ``_project_details`` keys to each record, fetching concurrently.
 
-    A project whose JSON cannot be fetched keeps ``None`` details (with a warning),
-    rather than failing the whole listing.
+    A project whose JSON cannot be fetched is left without the detail keys (with a
+    warning), rather than failing the whole listing. Leaving them out, instead of
+    setting them to ``None``, keeps a failed fetch distinguishable from a project
+    that has no summary or release, so a cached listing is refetched for details.
     """
     from concurrent.futures import ThreadPoolExecutor
 
@@ -364,7 +369,7 @@ def _add_details(projects_info, *, project_json, max_workers):
             return _project_details(project_json(name))
         except RequestException as e:
             failed.append(f"{name} ({e})")
-            return dict.fromkeys(("description", "version", "date"))
+            return {}
 
     failed = []
     with ThreadPoolExecutor(max_workers=max_workers) as pool:
@@ -401,7 +406,8 @@ def slurp_user_projects_info(
     If ``cache_results`` is True (the default), results are cached on disk, in
     ``slurp_user_projects_info.user_projects_info_cache_folder``.
     If ``refresh`` is True, the cache is refreshed.
-    A cache written without details is refetched when details are asked for.
+    A cache is refetched when details are asked for and any of its records lacks
+    them: written without details, by an older version, or after a failed fetch.
 
     ``user_packages`` (``user -> [(role, name), ...]``) and ``project_json``
     (``name -> dict``) are the transports; the defaults call PyPI.
@@ -414,7 +420,7 @@ def slurp_user_projects_info(
 
     if cache_results and cache_file.exists() and not refresh:
         cached = json.loads(cache_file.read_text())
-        if not with_details or all("date" in d for d in cached):
+        if not with_details or all(_DETAIL_KEYS <= d.keys() for d in cached):
             return cached
 
     projects_info = [
