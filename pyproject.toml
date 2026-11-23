@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "yp"
-version = "0.0.16"
+version = "0.0.17"
 description = "A mapping view to pypi projects"
 readme = "README.md"
 requires-python = ">=3.10"
