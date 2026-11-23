@@ -2,16 +2,18 @@
 
 # About this build
 
-This documentation was built on **2026-11-22 22:09 UTC** from commit <a href="https://github.com/thorwhalen/yp/commit/d376a633071b80843ba69e538d7d65d81ebc141e"><code>d376a63</code></a> on branch <code>master</code>, for **yp 0.0.15** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-23 05:54 UTC** from commit <a href="https://github.com/thorwhalen/yp/commit/c18aa19a43f6017078c0d30a922079748ad765c8"><code>c18aa19</code></a> on branch <code>master</code>, for **yp 0.0.16** (from <code>pyproject.toml</code>).
 
-#### NOTE
-Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
+#### WARNING
+The documentation and the package may be misaligned:
+
+- The documented version (0.0.16) is behind the latest release on PyPI (0.0.17): `pip install yp` gives newer code than these docs describe.
 
 ## Source
 
 |                     |                                                                                                                                                      |
 |---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/thorwhalen/yp/commit/d376a633071b80843ba69e538d7d65d81ebc141e"><code>d376a633071b80843ba69e538d7d65d81ebc141e</code></a> |
+| Commit              | <a href="https://github.com/thorwhalen/yp/commit/c18aa19a43f6017078c0d30a922079748ad765c8"><code>c18aa19a43f6017078c0d30a922079748ad765c8</code></a> |
 | Branch              | <code>master</code>                                                                                                                                  |
 | Tags at this commit | none                                                                                                                                                 |
 | Working tree        | clean                                                                                                                                                |
@@ -22,9 +24,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>thorwhalen/yp</code>                                                                 |
-| Run          | <a href="https://github.com/thorwhalen/yp/actions/runs/45075997499">45075997499</a>        |
+| Run          | <a href="https://github.com/thorwhalen/yp/actions/runs/45120513608">45120513608</a>        |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>d376a633071b80843ba69e538d7d65d81ebc141e</code> (in the history of the built commit) |
+| Event commit | <code>c18aa19a43f6017078c0d30a922079748ad765c8</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -49,13 +51,13 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/yp/0.0.15/">0.0.15</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/yp/0.0.17/">0.0.17</a>, newer than the documented version (0.0.16).
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/thorwhalen/yp && cd yp
-git checkout d376a633071b80843ba69e538d7d65d81ebc141e
+git checkout c18aa19a43f6017078c0d30a922079748ad765c8
 pip install "epythet==0.2.23"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

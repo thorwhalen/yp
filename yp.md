@@ -1,4 +1,4 @@
-> built 2026-11-22 22:09 UTC from d376a63 (master) · yp 0.0.15. Details: build_info.json
+> built 2026-11-23 05:54 UTC from c18aa19 (master) · yp 0.0.16. Details: build_info.json
 
 # index.html.md
 
@@ -6,95 +6,63 @@
 
 # yp
 
-A mapping view to pypi projects
+A mapping view to PyPI projects: look up any project’s info by name with `p['numpy']`, list all project names, and narrow the collection to a user’s projects or your own set. For more PyPI interaction tools, see also `pipoke`.
 
-To install:	`pip install yp`
-
-See also: `pipoke`, for more pypi interaction tools.
-
-# Example Usage
-
-Get a mapping of all of `pypi` projects.
-
-```none
->>> from yp import Pypi
->>> p = Pypi()
+```bash
+pip install yp
 ```
 
-The keys of this mapping are the project names. There are lots!
+## Example usage
 
-```none
->>> len(p)  # doctest: +SKIP
+Get a mapping of all of `pypi` projects. The keys are the project names (there are lots!), and the values are each project’s info:
+
+```python
+>>> from yp import Pypi
+>>> p = Pypi()
+>>> len(p)
 405120
 >>> 'numpy' in p and 'dol' in p
 True
 >>> 'no_way_this_is_a_package' in p
 False
-```
-
-The values of the mapping are the corresponding project’s info, which is a
-nested dict of good stuff.
-
-```none
 >>> info = p['numpy']
 >>> list(info)
 ['info', 'last_serial', 'releases', 'urls', 'vulnerabilities']
+
 ```
 
-Tip: To only get the info you want, you’ll
+The project info is obtained live, making requests to the `https://pypi.python.org/pypi/{pkg_name}/json` API, but the list of all project names is taken from a local file. You should update that file regularly (but not TOO regularly!) to be in sync with pypi.org:
 
-The project info is obtained, live, making requests to the
-`https://pypi.python.org/pypi/{pkg_name}/json` API,
-but the list of all project names is actually taken from a local file.
-You should update that file regularly (but not TOO regularly!) to be in sync
-with pypi.org. To do so, do this:
+```python
+>>> Pypi.refresh_cached_package_names()
 
-```none
->>> Pypi.refresh_cached_package_names()  # doctest: +SKIP
 ```
 
-If, on the other hand, you don’t want all projects of Pypi to be the collection
-you’re working with, you can specify what `user` they should belong to:
+If you don’t want all projects of PyPI to be the collection you’re working with, you can specify what `user` they should belong to, or explicitly give `Pypi` a collection of project names:
 
-```none
+```python
 >>> p = Pypi(user='thorwhalen1')
->>> len(p)  # doctest: +SKIP
+>>> len(p)
 131
-```
-
-You can also explicitly give `Pypi` a collection of projects you want to work
-with:
-
-```none
 >>> p = Pypi(proj_names={'numpy', 'pandas', 'dol'})
 >>> len(p)
 3
+
 ```
 
-You can do a lot more by simply using the tools of `dol` to change the mapping
-you want to work with in all kinds of ways!
+You can do a lot more by simply using the tools of `dol` to change the mapping you want to work with in all kinds of ways!
 
 # Extras
 
-`yp` ships a cached list of every PyPI project name (`yp/data/pkg_list.tsv.gz`), so
-name lookups are instant and offline. The cache is loaded lazily – the first lookup
-pays for it, `import yp` does not.
+`yp` ships a cached list of every PyPI project name (`yp/data/pkg_list.tsv.gz`), so name lookups are instant and offline. The cache is loaded lazily – the first lookup pays for it, `import yp` does not.
 
-`yp.refresh_saved_pkg_name_stub()` fetches the current list and saves it to your app
-folder, which then takes precedence over the copy shipped with the package. (It writes
-there rather than into the installed package, which is read-only in many installs.)
-Pass `save_to=` to write elsewhere.
+`yp.refresh_saved_pkg_name_stub()` fetches the current list and saves it to your app folder, which then takes precedence over the copy shipped with the package. (It writes there rather than into the installed package, which is read-only in many installs.) Pass `save_to=` to write elsewhere.
 
-I also refresh the shipped copy from time to time and push the results. You can find
-the list (as a text file with one name per line) here:
-https://raw.githubusercontent.com/thorwhalen/yp/refs/heads/master/yp/data/pkg_list.txt
+I also refresh the shipped copy from time to time and push the results. You can find the list (as a text file with one name per line) here: https://raw.githubusercontent.com/thorwhalen/yp/refs/heads/master/yp/data/pkg_list.txt
 
 # Skills
 
-`yp` ships [AI agent skills](https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview)
-(SKILL.md files) that teach an agent how to drive its tools. They live in
-`yp/data/skills/` (so they install with the package) and are mirrored into
-`.claude/skills/` for Claude Code.
+`yp` ships [AI agent skills](https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview) (SKILL.md files) that teach an agent how to drive its tools. They live in `yp/data/skills/` (so they install with the package) and are mirrored into `.claude/skills/` for Claude Code.
 
 | Skill                  | What it helps you do                                                                                                                          |
 |------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
@@ -105,7 +73,7 @@ https://raw.githubusercontent.com/thorwhalen/yp/refs/heads/master/yp/data/pkg_li
 
 Install one into an agent host with [`gh skill`](https://github.com/github/gh-skill):
 
-```none
+```bash
 gh skill install thorwhalen/yp yp-name-availability
 ```
 
@@ -627,16 +595,18 @@ Utils for yp
 
 # About this build
 
-This documentation was built on **2026-11-22 22:09 UTC** from commit <a href="https://github.com/thorwhalen/yp/commit/d376a633071b80843ba69e538d7d65d81ebc141e"><code>d376a63</code></a> on branch <code>master</code>, for **yp 0.0.15** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-23 05:54 UTC** from commit <a href="https://github.com/thorwhalen/yp/commit/c18aa19a43f6017078c0d30a922079748ad765c8"><code>c18aa19</code></a> on branch <code>master</code>, for **yp 0.0.16** (from <code>pyproject.toml</code>).
 
-#### NOTE
-Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
+#### WARNING
+The documentation and the package may be misaligned:
+
+- The documented version (0.0.16) is behind the latest release on PyPI (0.0.17): `pip install yp` gives newer code than these docs describe.
 
 ## Source
 
 |                     |                                                                                                                                                      |
 |---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/thorwhalen/yp/commit/d376a633071b80843ba69e538d7d65d81ebc141e"><code>d376a633071b80843ba69e538d7d65d81ebc141e</code></a> |
+| Commit              | <a href="https://github.com/thorwhalen/yp/commit/c18aa19a43f6017078c0d30a922079748ad765c8"><code>c18aa19a43f6017078c0d30a922079748ad765c8</code></a> |
 | Branch              | <code>master</code>                                                                                                                                  |
 | Tags at this commit | none                                                                                                                                                 |
 | Working tree        | clean                                                                                                                                                |
@@ -647,9 +617,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>thorwhalen/yp</code>                                                                 |
-| Run          | <a href="https://github.com/thorwhalen/yp/actions/runs/45075997499">45075997499</a>        |
+| Run          | <a href="https://github.com/thorwhalen/yp/actions/runs/45120513608">45120513608</a>        |
 | Ref          | <code>refs/heads/master</code>                                                             |
-| Event commit | <code>d376a633071b80843ba69e538d7d65d81ebc141e</code> (in the history of the built commit) |
+| Event commit | <code>c18aa19a43f6017078c0d30a922079748ad765c8</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -674,13 +644,13 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/yp/0.0.15/">0.0.15</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/yp/0.0.17/">0.0.17</a>, newer than the documented version (0.0.16).
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/thorwhalen/yp && cd yp
-git checkout d376a633071b80843ba69e538d7d65d81ebc141e
+git checkout c18aa19a43f6017078c0d30a922079748ad765c8
 pip install "epythet==0.2.23"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

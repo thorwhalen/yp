@@ -1,32 +1,32 @@
 {
   "schema_version": 1,
-  "built_at": "2026-11-22T22:09:42Z",
+  "built_at": "2026-11-23T05:54:23Z",
   "package": {
     "name": "yp",
-    "version": "0.0.15",
+    "version": "0.0.16",
     "display_name": "yp",
     "source": "pyproject.toml"
   },
   "git": {
     "available": true,
-    "commit": "d376a633071b80843ba69e538d7d65d81ebc141e",
-    "short_commit": "d376a63",
+    "commit": "c18aa19a43f6017078c0d30a922079748ad765c8",
+    "short_commit": "c18aa19",
     "branch": "master",
     "tags": [],
     "dirty": false,
     "remote_url": "https://github.com/thorwhalen/yp",
-    "commit_url": "https://github.com/thorwhalen/yp/commit/d376a633071b80843ba69e538d7d65d81ebc141e",
+    "commit_url": "https://github.com/thorwhalen/yp/commit/c18aa19a43f6017078c0d30a922079748ad765c8",
     "error": null
   },
   "ci": {
     "provider": "github",
     "repository": "thorwhalen/yp",
-    "sha": "d376a633071b80843ba69e538d7d65d81ebc141e",
+    "sha": "c18aa19a43f6017078c0d30a922079748ad765c8",
     "sha_in_history": true,
     "ref": "refs/heads/master",
     "ref_name": "master",
-    "run_id": "45075997499",
-    "run_url": "https://github.com/thorwhalen/yp/actions/runs/45075997499",
+    "run_id": "45120513608",
+    "run_url": "https://github.com/thorwhalen/yp/actions/runs/45120513608",
     "server_url": "https://github.com"
   },
   "tools": {
@@ -60,14 +60,16 @@
   },
   "pypi": {
     "checked": true,
-    "latest": "0.0.15",
-    "relation": "same",
+    "latest": "0.0.17",
+    "relation": "behind",
     "error": null
   },
-  "reproduce": "git clone https://github.com/thorwhalen/yp && cd yp\ngit checkout d376a633071b80843ba69e538d7d65d81ebc141e\npip install \"epythet==0.2.23\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/thorwhalen/yp && cd yp\ngit checkout c18aa19a43f6017078c0d30a922079748ad765c8\npip install \"epythet==0.2.23\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
-    "aligned": true,
-    "notes": []
+    "aligned": false,
+    "notes": [
+      "The documented version (0.0.16) is behind the latest release on PyPI (0.0.17): `pip install yp` gives newer code than these docs describe."
+    ]
   }
 }
